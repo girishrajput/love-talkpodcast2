@@ -316,40 +316,194 @@ export default function AboutPage() {
       </div>
 
       {/* Digital Presence & Communities */}
-      <section className="bg-gray-50 dark:bg-gray-900/50 p-8 sm:p-12 rounded-3xl border border-gray-200/80 dark:border-gray-800/80 space-y-6 text-center">
-        <div className="space-y-2 max-w-2xl mx-auto">
+      <section className="bg-gray-50 dark:bg-gray-900/50 p-8 sm:p-12 rounded-3xl border border-gray-200/80 dark:border-gray-800/80 space-y-8">
+        <div className="space-y-2 text-center max-w-2xl mx-auto">
           <span className="text-xs font-bold text-brand-600 uppercase tracking-wider">📱 Multi-Platform Reach</span>
-          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">Digital Presence & Communities</h2>
+          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">Social Community Groups & Media Pages</h2>
           <p className="text-xs sm:text-sm text-gray-500">
-            Kota RJ Pawan actively shares educational and motivational content across global networks:
+            Join the official Love Talk Podcast community groups or follow Kota RJ Pawan across social networks:
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <a href="https://www.lovetalkpodcast.in" target="_blank" rel="noreferrer" className="px-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs font-bold text-gray-900 dark:text-white hover:border-brand-500 flex items-center gap-2 shadow-sm">
-            <Globe className="w-4 h-4 text-brand-600" /> Website (lovetalkpodcast.in)
-          </a>
-          <a href="https://youtube.com" target="_blank" rel="noreferrer" className="px-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs font-bold text-gray-900 dark:text-white hover:border-red-500 flex items-center gap-2 shadow-sm">
-            <Youtube className="w-4 h-4 text-red-600" /> YouTube
-          </a>
-          <a href="https://instagram.com" target="_blank" rel="noreferrer" className="px-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs font-bold text-gray-900 dark:text-white hover:border-pink-500 flex items-center gap-2 shadow-sm">
-            <Instagram className="w-4 h-4 text-pink-500" /> Instagram
-          </a>
-          <a href="https://facebook.com" target="_blank" rel="noreferrer" className="px-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs font-bold text-gray-900 dark:text-white hover:border-blue-600 flex items-center gap-2 shadow-sm">
-            <Share2 className="w-4 h-4 text-blue-600" /> Facebook
-          </a>
-          <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="px-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs font-bold text-gray-900 dark:text-white hover:border-sky-600 flex items-center gap-2 shadow-sm">
-            <Linkedin className="w-4 h-4 text-sky-600" /> LinkedIn
-          </a>
-          <a href="https://x.com" target="_blank" rel="noreferrer" className="px-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs font-bold text-gray-900 dark:text-white hover:border-gray-900 flex items-center gap-2 shadow-sm">
-            <Twitter className="w-4 h-4 text-gray-900 dark:text-white" /> X (Twitter)
-          </a>
-          <a href="https://t.me/lovetalkpodcast" target="_blank" rel="noreferrer" className="px-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs font-bold text-gray-900 dark:text-white hover:border-sky-500 flex items-center gap-2 shadow-sm">
-            <Send className="w-4 h-4 text-sky-400" /> Telegram & WhatsApp
-          </a>
-          <span className="px-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs font-bold text-gray-900 dark:text-white flex items-center gap-2 shadow-sm">
-            <Users className="w-4 h-4 text-brand-500" /> Arattai Communities
-          </span>
+        {/* 1. Social Community Groups */}
+        <div className="space-y-3">
+          <h3 className="text-sm font-extrabold text-gray-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+            <Users className="w-4 h-4 text-brand-600" /> Lovetalk Podcast Social Community Groups
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <a
+              href="https://facebook.com/groups/1036267591933452/"
+              target="_blank"
+              rel="noreferrer"
+              className="p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-500 flex items-center gap-3.5 shadow-sm transition-all group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center font-bold text-base group-hover:scale-110 transition-transform">
+                f
+              </div>
+              <div>
+                <h4 className="font-bold text-xs sm:text-sm text-gray-900 dark:text-white">Facebook Community Group</h4>
+                <p className="text-[11px] text-gray-500 line-clamp-1">Join 1000+ members discussion</p>
+              </div>
+            </a>
+
+            <a
+              href="https://www.instagram.com/channel/AbbCzQrb_rbQL47c/"
+              target="_blank"
+              rel="noreferrer"
+              className="p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-pink-500 flex items-center gap-3.5 shadow-sm transition-all group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-pink-500/10 text-pink-600 flex items-center justify-center font-bold text-base group-hover:scale-110 transition-transform">
+                <Instagram className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-bold text-xs sm:text-sm text-gray-900 dark:text-white">Instagram Broadcast Channel</h4>
+                <p className="text-[11px] text-gray-500 line-clamp-1">Exclusive daily voice notes & tips</p>
+              </div>
+            </a>
+
+            <a
+              href="https://t.me/lovetalkpodcast"
+              target="_blank"
+              rel="noreferrer"
+              className="p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-sky-500 flex items-center gap-3.5 shadow-sm transition-all group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-sky-500/10 text-sky-500 flex items-center justify-center font-bold text-base group-hover:scale-110 transition-transform">
+                <Send className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-bold text-xs sm:text-sm text-gray-900 dark:text-white">Telegram Community</h4>
+                <p className="text-[11px] text-gray-500 line-clamp-1">t.me/lovetalkpodcast</p>
+              </div>
+            </a>
+
+            <a
+              href="https://aratt.ai/@lovetalk_podcast_by_kotarjpawa"
+              target="_blank"
+              rel="noreferrer"
+              className="p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-emerald-500 flex items-center gap-3.5 shadow-sm transition-all group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold text-base group-hover:scale-110 transition-transform">
+                @
+              </div>
+              <div>
+                <h4 className="font-bold text-xs sm:text-sm text-gray-900 dark:text-white">Arattai Community</h4>
+                <p className="text-[11px] text-gray-500 line-clamp-1">@lovetalk_podcast_by_kotarjpawa</p>
+              </div>
+            </a>
+
+            <a
+              href="https://youtube.com/@kotarjpawan/community?si=ccqBGKMONX4HK2ug"
+              target="_blank"
+              rel="noreferrer"
+              className="p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-red-500 flex items-center gap-3.5 shadow-sm transition-all group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-red-500/10 text-red-600 flex items-center justify-center font-bold text-base group-hover:scale-110 transition-transform">
+                <Youtube className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-bold text-xs sm:text-sm text-gray-900 dark:text-white">YouTube Community Tab</h4>
+                <p className="text-[11px] text-gray-500 line-clamp-1">Polls, updates & episode previews</p>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        {/* 2. Host Social Media Pages */}
+        <div className="space-y-3 pt-2">
+          <h3 className="text-sm font-extrabold text-gray-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+            <Radio className="w-4 h-4 text-brand-600" /> Lovetalk Podcast & Host Social Media Pages
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <a
+              href="https://youtube.com/playlist?list=PLMMrN7fUIrdSskjkpNFywhhidWODSklsr&si=WTaYQpmlksNBW25G"
+              target="_blank"
+              rel="noreferrer"
+              className="p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-red-500 flex items-center gap-3.5 shadow-sm transition-all group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-red-500/10 text-red-600 flex items-center justify-center font-bold text-base group-hover:scale-110 transition-transform">
+                <Youtube className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-bold text-xs sm:text-sm text-gray-900 dark:text-white">YouTube Full Playlist</h4>
+                <p className="text-[11px] text-gray-500 line-clamp-1">Watch & listen to all episodes</p>
+              </div>
+            </a>
+
+            <a
+              href="https://www.facebook.com/kotarjpawan"
+              target="_blank"
+              rel="noreferrer"
+              className="p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-500 flex items-center gap-3.5 shadow-sm transition-all group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center font-bold text-base group-hover:scale-110 transition-transform">
+                f
+              </div>
+              <div>
+                <h4 className="font-bold text-xs sm:text-sm text-gray-900 dark:text-white">Facebook Page</h4>
+                <p className="text-[11px] text-gray-500 line-clamp-1">@kotarjpawan</p>
+              </div>
+            </a>
+
+            <a
+              href="https://www.instagram.com/kotarjpawan?stkn=Y2tkOGhpYTA3enph"
+              target="_blank"
+              rel="noreferrer"
+              className="p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-pink-500 flex items-center gap-3.5 shadow-sm transition-all group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-pink-500/10 text-pink-600 flex items-center justify-center font-bold text-base group-hover:scale-110 transition-transform">
+                <Instagram className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-bold text-xs sm:text-sm text-gray-900 dark:text-white">Instagram Profile</h4>
+                <p className="text-[11px] text-gray-500 line-clamp-1">@kotarjpawan</p>
+              </div>
+            </a>
+
+            <a
+              href="https://x.com/KOTARJPAWAN"
+              target="_blank"
+              rel="noreferrer"
+              className="p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-gray-900 dark:hover:border-white flex items-center gap-3.5 shadow-sm transition-all group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-gray-500/10 text-gray-900 dark:text-white flex items-center justify-center font-bold text-base group-hover:scale-110 transition-transform">
+                𝕏
+              </div>
+              <div>
+                <h4 className="font-bold text-xs sm:text-sm text-gray-900 dark:text-white">X (Twitter) Profile</h4>
+                <p className="text-[11px] text-gray-500 line-clamp-1">@KOTARJPAWAN</p>
+              </div>
+            </a>
+
+            <a
+              href="https://www.linkedin.com/in/kotarjpawan"
+              target="_blank"
+              rel="noreferrer"
+              className="p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-sky-500 flex items-center gap-3.5 shadow-sm transition-all group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-sky-500/10 text-sky-600 flex items-center justify-center font-bold text-base group-hover:scale-110 transition-transform">
+                in
+              </div>
+              <div>
+                <h4 className="font-bold text-xs sm:text-sm text-gray-900 dark:text-white">LinkedIn Profile</h4>
+                <p className="text-[11px] text-gray-500 line-clamp-1">Kota RJ Pawan</p>
+              </div>
+            </a>
+
+            <a
+              href="https://www.lovetalkpodcast.in"
+              target="_blank"
+              rel="noreferrer"
+              className="p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-brand-500 flex items-center gap-3.5 shadow-sm transition-all group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-600 flex items-center justify-center font-bold text-base group-hover:scale-110 transition-transform">
+                <Globe className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-bold text-xs sm:text-sm text-gray-900 dark:text-white">Official Website</h4>
+                <p className="text-[11px] text-gray-500 line-clamp-1">lovetalkpodcast.in</p>
+              </div>
+            </a>
+          </div>
         </div>
       </section>
 

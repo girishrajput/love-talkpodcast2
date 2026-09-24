@@ -245,7 +245,16 @@ class DatabaseSeeder extends Seeder
         // 5. Site Settings
         SiteSetting::set('platform_name', 'Love Talk Podcast');
         SiteSetting::set('tagline', 'Real Conversations on Love, Connection & Relationships');
+        SiteSetting::set('host_name', 'Kota RJ Pawan');
         SiteSetting::set('social_telegram', 'https://t.me/lovetalkpodcast');
-        SiteSetting::set('social_instagram', 'https://instagram.com/lovetalkpodcast');
+        SiteSetting::set('social_instagram_channel', 'https://www.instagram.com/channel/AbbCzQrb_rbQL47c/');
+        SiteSetting::set('social_facebook_group', 'https://facebook.com/groups/1036267591933452/');
+        SiteSetting::set('social_arattai', 'https://aratt.ai/@lovetalk_podcast_by_kotarjpawa');
+        SiteSetting::set('social_youtube_community', 'https://youtube.com/@kotarjpawan/community?si=ccqBGKMONX4HK2ug');
+        SiteSetting::set('social_youtube_playlist', 'https://youtube.com/playlist?list=PLMMrN7fUIrdSskjkpNFywhhidWODSklsr&si=WTaYQpmlksNBW25G');
+        SiteSetting::set('social_facebook', 'https://www.facebook.com/kotarjpawan');
+        SiteSetting::set('social_instagram', 'https://www.instagram.com/kotarjpawan?stkn=Y2tkOGhpYTA3enph');
+        SiteSetting::set('social_twitter', 'https://x.com/KOTARJPAWAN');
+        SiteSetting::set('social_linkedin', 'https://www.linkedin.com/in/kotarjpawan');
     }
 }

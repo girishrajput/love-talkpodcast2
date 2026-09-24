@@ -71,6 +71,61 @@ export const HostSection: React.FC = () => {
               <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">LoveTalk & NotifyHealth</p>
             </div>
           </div>
+
+          {/* Social Links Row */}
+          <div className="pt-2 space-y-2">
+            <p className="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Connect with Kota RJ Pawan:</p>
+            <div className="flex flex-wrap items-center gap-2">
+              <a
+                href="https://youtube.com/playlist?list=PLMMrN7fUIrdSskjkpNFywhhidWODSklsr&si=WTaYQpmlksNBW25G"
+                target="_blank"
+                rel="noreferrer"
+                className="px-3 py-1.5 rounded-xl bg-red-500/10 text-red-600 hover:bg-red-600 hover:text-white dark:bg-red-950/40 dark:text-red-400 dark:hover:bg-red-600 dark:hover:text-white border border-red-500/20 text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
+              >
+                YouTube
+              </a>
+              <a
+                href="https://www.instagram.com/kotarjpawan?stkn=Y2tkOGhpYTA3enph"
+                target="_blank"
+                rel="noreferrer"
+                className="px-3 py-1.5 rounded-xl bg-pink-500/10 text-pink-600 hover:bg-pink-600 hover:text-white dark:bg-pink-950/40 dark:text-pink-400 dark:hover:bg-pink-600 dark:hover:text-white border border-pink-500/20 text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
+              >
+                Instagram
+              </a>
+              <a
+                href="https://www.facebook.com/kotarjpawan"
+                target="_blank"
+                rel="noreferrer"
+                className="px-3 py-1.5 rounded-xl bg-blue-500/10 text-blue-600 hover:bg-blue-600 hover:text-white dark:bg-blue-950/40 dark:text-blue-400 dark:hover:bg-blue-600 dark:hover:text-white border border-blue-500/20 text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
+              >
+                Facebook
+              </a>
+              <a
+                href="https://x.com/KOTARJPAWAN"
+                target="_blank"
+                rel="noreferrer"
+                className="px-3 py-1.5 rounded-xl bg-gray-500/10 text-gray-700 hover:bg-black hover:text-white dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white dark:hover:text-black border border-gray-300 dark:border-gray-700 text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
+              >
+                X (Twitter)
+              </a>
+              <a
+                href="https://www.linkedin.com/in/kotarjpawan"
+                target="_blank"
+                rel="noreferrer"
+                className="px-3 py-1.5 rounded-xl bg-sky-500/10 text-sky-600 hover:bg-sky-600 hover:text-white dark:bg-sky-950/40 dark:text-sky-400 dark:hover:bg-sky-600 dark:hover:text-white border border-sky-500/20 text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
+              >
+                LinkedIn
+              </a>
+              <a
+                href="https://t.me/lovetalkpodcast"
+                target="_blank"
+                rel="noreferrer"
+                className="px-3 py-1.5 rounded-xl bg-sky-500/10 text-sky-600 hover:bg-sky-500 hover:text-white dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-500 dark:hover:text-white border border-sky-400/20 text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
+              >
+                Telegram
+              </a>
+            </div>
+          </div>
         </div>
 
       </div>

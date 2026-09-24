@@ -312,7 +312,99 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 5. Newsletter Signup */}
+      {/* 5. Official Community Groups Section */}
+      <section className="bg-gradient-to-br from-brand-950/70 via-gray-900 to-gray-950 p-8 sm:p-12 rounded-3xl border border-brand-800/40 text-white space-y-8 shadow-2xl">
+        <div className="text-center max-w-2xl mx-auto space-y-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/20 text-brand-300 border border-brand-500/30 text-xs font-bold uppercase tracking-wider">
+            <Radio className="w-4 h-4 text-brand-400 animate-pulse" /> Official Communities
+          </div>
+          <h2 className="text-3xl font-extrabold tracking-tight">
+            Join the Love Talk Community
+          </h2>
+          <p className="text-sm text-gray-300">
+            Connect directly with Kota RJ Pawan and thousands of listeners across our official social community groups.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <a
+            href="https://facebook.com/groups/1036267591933452/"
+            target="_blank"
+            rel="noreferrer"
+            className="p-5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-blue-500 transition-all flex flex-col justify-between space-y-4 group backdrop-blur-md"
+          >
+            <div className="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform">
+              f
+            </div>
+            <div>
+              <h4 className="font-bold text-sm text-white">Facebook Group</h4>
+              <p className="text-xs text-gray-400 mt-1">Join the group</p>
+            </div>
+          </a>
+
+          <a
+            href="https://www.instagram.com/channel/AbbCzQrb_rbQL47c/"
+            target="_blank"
+            rel="noreferrer"
+            className="p-5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-pink-500 transition-all flex flex-col justify-between space-y-4 group backdrop-blur-md"
+          >
+            <div className="w-10 h-10 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform">
+              <Instagram className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="font-bold text-sm text-white">Insta Channel</h4>
+              <p className="text-xs text-gray-400 mt-1">Broadcast updates</p>
+            </div>
+          </a>
+
+          <a
+            href="https://t.me/lovetalkpodcast"
+            target="_blank"
+            rel="noreferrer"
+            className="p-5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-sky-500 transition-all flex flex-col justify-between space-y-4 group backdrop-blur-md"
+          >
+            <div className="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform">
+              <Send className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="font-bold text-sm text-white">Telegram Group</h4>
+              <p className="text-xs text-gray-400 mt-1">VIP community</p>
+            </div>
+          </a>
+
+          <a
+            href="https://aratt.ai/@lovetalk_podcast_by_kotarjpawa"
+            target="_blank"
+            rel="noreferrer"
+            className="p-5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-emerald-500 transition-all flex flex-col justify-between space-y-4 group backdrop-blur-md"
+          >
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform">
+              @
+            </div>
+            <div>
+              <h4 className="font-bold text-sm text-white">Arattai Community</h4>
+              <p className="text-xs text-gray-400 mt-1">Private chats</p>
+            </div>
+          </a>
+
+          <a
+            href="https://youtube.com/@kotarjpawan/community?si=ccqBGKMONX4HK2ug"
+            target="_blank"
+            rel="noreferrer"
+            className="p-5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-red-500 transition-all flex flex-col justify-between space-y-4 group backdrop-blur-md"
+          >
+            <div className="w-10 h-10 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform">
+              <Youtube className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="font-bold text-sm text-white">YouTube Community</h4>
+              <p className="text-xs text-gray-400 mt-1">Polls & notices</p>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      {/* 6. Newsletter Signup */}
       <NewsletterForm />
 
     </div>
