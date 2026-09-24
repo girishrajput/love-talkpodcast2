@@ -15,6 +15,8 @@
         <!-- Razorpay Checkout Script -->
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
+        <link rel="icon" type="image/png" href="<?php echo e(asset('images/favicon.png')); ?>">
+
         <!-- Scripts & Styles via Vite -->
         <?php echo app('Illuminate\Foundation\Vite')->reactRefresh(); ?>
         <?php echo app('Illuminate\Foundation\Vite')(['resources/js/app.tsx']); ?>

@@ -199,7 +199,7 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
         )}
 
         {/* Quick Testing Shortcuts (Preserved for local development) */}
-        <div className="space-y-3 pt-2">
+        {/* <div className="space-y-3 pt-2">
           <div className="flex items-center justify-between">
             <p className="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Local Testing Account Shortcuts:</p>
             <span className="text-[10px] bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-400 px-2 py-0.5 rounded font-mono">Dev Mode</span>
@@ -240,7 +240,7 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
               <span className="text-[10px] bg-purple-500/10 text-purple-600 font-bold px-2 py-0.5 rounded-full">Super Admin</span>
             </button>
           </div>
-        </div>
+        </div> */}
 
         <div className="relative flex py-1 items-center">
           <div className="flex-grow border-t border-gray-200 dark:border-gray-800"></div>

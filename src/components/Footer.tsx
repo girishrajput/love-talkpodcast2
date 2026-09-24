@@ -16,10 +16,15 @@ export const Footer: React.FC = () => {
           {/* Col 1: Brand & Host */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center text-white">
-                <Radio className="w-5 h-5" />
+              <img 
+                src="images/favicon.png" 
+                alt="Love Talk Podcast Logo" 
+                className="w-10 h-10 object-contain rounded-xl bg-white" 
+              />
+              <div>
+                <span className="font-bold text-xl text-white">Love Talk Podcast</span>
+                <p className="text-xs text-white dark:text-white font-medium">By Kota RJ Pawan</p>
               </div>
-              <span className="font-bold text-xl text-white">Love Talk Podcast</span>
             </div>
             <p className="text-sm text-gray-400 leading-relaxed">
               "Welcome to 'Love Talk' Podcast! We're glad that you are here." Hosted By Kota RJ Pawan. Real conversations on love, connection & mental wellness.

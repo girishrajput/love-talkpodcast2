@@ -53,17 +53,21 @@ export const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 via-brand-500 to-rose-400 flex items-center justify-center text-white shadow-lg shadow-brand-500/25 group-hover:scale-105 transition-transform">
-            <Radio className="w-6 h-6 animate-pulse" />
-          </div>
-          <div>
-            <div className="flex items-center gap-1.5 font-bold text-xl tracking-tight text-gray-900 dark:text-white">
-              Love Talk <Heart className="w-4 h-4 text-brand-500 fill-brand-500 inline" />
-            </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">By Kota RJ Pawan</p>
-          </div>
-        </Link>
+       
+       {/* Brand Logo */}
+<Link href="/" className="flex items-center gap-3 group">
+  <img 
+    src="images/favicon.png" 
+    alt="Love Talk Podcast Logo" 
+    className="w-11 h-11 object-contain rounded-xl group-hover:scale-105 transition-transform  bg-white" 
+  />
+  <div>
+    <div className="flex items-center gap-1.5 font-bold text-xl tracking-tight text-gray-900 dark:text-white">
+      Love Talk Podcast
+    </div>
+    <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">By Kota RJ Pawan</p>
+  </div>
+</Link>
 
         {/* Desktop Nav Links */}
         <nav className="hidden lg:flex items-center gap-1 bg-gray-100/70 dark:bg-gray-900/60 p-1.5 rounded-full border border-gray-200/50 dark:border-gray-800/50">

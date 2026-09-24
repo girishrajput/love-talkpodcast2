@@ -15,6 +15,8 @@
         <!-- Razorpay Checkout Script -->
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
+        <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
+
         <!-- Scripts & Styles via Vite -->
         @viteReactRefresh
         @vite(['resources/js/app.tsx'])
