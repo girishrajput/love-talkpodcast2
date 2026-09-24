@@ -18,7 +18,7 @@ const DICTIONARY: Translations = {
   navAbout: { en: 'About Us', hi: 'हमारे बारे में' },
   navAdmin: { en: 'Admin Dashboard', hi: 'एडमिन डैशबोर्ड' },
   
-  heroTagline: { en: 'Love Talk Podcast with Tim & Chels', hi: 'टिम और चेल्स के साथ लव टॉक्स पॉडकास्ट' },
+  heroTagline: { en: 'Love Talk Podcast By Kota RJ Pawan', hi: 'कोटा आरजे पवन द्वारा लव टॉक्स पॉडकास्ट' },
   heroTitle: { en: 'Welcome to Love Talk! We are glad you are here.', hi: 'लव टॉक्स में आपका स्वागत है! हमें खुशी है कि आप यहाँ हैं।' },
   heroSubtitle: { 
     en: 'Navigating relationships, emotional wellness, self-love, and modern dating for young adults across India & beyond. New episodes every Friday.', 
@@ -40,9 +40,9 @@ const DICTIONARY: Translations = {
   filterHindi: { en: 'Hindi Special (हिंदी)', hi: 'हिंदी विशेष' },
   filterBilingual: { en: 'Bilingual (Hinglish)', hi: 'द्विभाषी (Hinglish)' },
   
-  hostsTitle: { en: 'Meet Your Hosts: Tim & Chels', hi: 'अपने होस्ट्स से मिलें: टिम और चेल्स' },
+  hostsTitle: { en: 'Meet Your Host: By Kota RJ Pawan', hi: 'अपने होस्ट से मिलें: कोटा आरजे पवन' },
   hostsSubtitle: { 
-    en: 'Real conversations, genuine stories, and practical relationship guidance from a couple who walks the journey with you.', 
+    en: 'Real conversations, genuine stories, and practical relationship guidance from a passionate psychologist who walks the journey with you.', 
     hi: 'सच्ची बातें, वास्तविक अनुभव और रिश्तों के लिए व्यावहारिक मार्गदर्शन।' 
   },
   

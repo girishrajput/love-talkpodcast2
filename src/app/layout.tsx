@@ -10,12 +10,12 @@ import { AudioPlayer } from '@/components/AudioPlayer';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://lovetalkpodcast.in'),
-  title: 'Love Talk Podcast | Tim & Chels | Relationship & Emotional Wellness',
-  description: "Welcome to 'Love Talk' Podcast with Tim & Chels! Discussing dating, relationship psychology, overthinking, and self-love for young adults in India and worldwide.",
-  keywords: ['Love Talk Podcast', 'Tim and Chels', 'Relationship Advice India', 'Podcast', 'Hindi Podcast', 'Self Love', 'Couples Podcast'],
-  authors: [{ name: 'Tim & Chels' }],
+  title: 'Love Talk Podcast | By Kota RJ Pawan | Relationship & Emotional Wellness',
+  description: "Welcome to 'Love Talk' Podcast By Kota RJ Pawan! Discussing dating, relationship psychology, overthinking, and self-love for young adults in India and worldwide.",
+  keywords: ['Love Talk Podcast', 'By Kota RJ Pawan', 'Kota RJ Pawan', 'Relationship Advice India', 'Podcast', 'Hindi Podcast', 'Self Love', 'Couples Podcast'],
+  authors: [{ name: 'By Kota RJ Pawan' }],
   openGraph: {
-    title: 'Love Talk Podcast | Tim & Chels',
+    title: 'Love Talk Podcast | By Kota RJ Pawan',
     description: "Welcome to 'Love Talk' Podcast! We're glad that you are here. New episodes every Friday.",
     url: 'https://lovetalkpodcast.in',
     siteName: 'Love Talk Podcast',
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Love Talk Podcast with Tim & Chels',
+    title: 'Love Talk Podcast By Kota RJ Pawan',
     description: 'Relationship advice, emotional wellness, and modern dating topics in English and Hindi.',
     images: ['/images/podcast_cover.jpg'],
   },
@@ -60,7 +60,7 @@ export default function RootLayout({
                       name: 'Love Talk Podcast',
                       author: {
                         '@type': 'Person',
-                        name: 'Tim & Chels',
+                        name: 'By Kota RJ Pawan',
                       },
                       description: "Welcome to 'Love Talk' Podcast! Discussing relationships, mental health, and emotional wellness.",
                       url: 'https://lovetalkpodcast.in',

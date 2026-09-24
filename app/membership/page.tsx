@@ -201,7 +201,7 @@ export default function MembershipPage() {
         </h1>
 
         <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">
-          Get unlimited access to locked premium audio episodes, ad-free listening, dual-language transcripts, and monthly live Q&As with Tim & Chels.
+          Get unlimited access to locked premium audio episodes, ad-free listening, dual-language transcripts, and monthly live Q&As with By Kota RJ Pawan.
         </p>
 
         {statusMessage && (

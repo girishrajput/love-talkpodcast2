@@ -224,16 +224,16 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
             </button>
 
             <button
-              onClick={() => handleSignIn('superadmin@lovetalkpodcast.in', 'Tim (Super Admin)')}
+              onClick={() => handleSignIn('superadmin@lovetalkpodcast.in', 'Kota RJ Pawan (Super Admin)')}
               disabled={isSubmitting}
               className="w-full p-3 rounded-2xl bg-gray-50 dark:bg-gray-800/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-between text-left transition-all group"
             >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-xs">
-                  T
+                  K
                 </div>
                 <div>
-                  <p className="font-bold text-xs text-gray-900 dark:text-white group-hover:text-purple-600">Tim (Host & Admin)</p>
+                  <p className="font-bold text-xs text-gray-900 dark:text-white group-hover:text-purple-600">Kota RJ Pawan (Host & Admin)</p>
                   <p className="text-[11px] text-gray-500 font-mono">superadmin@lovetalkpodcast.in</p>
                 </div>
               </div>

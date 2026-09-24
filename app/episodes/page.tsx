@@ -72,7 +72,7 @@ export default function EpisodesPage() {
           Episode Archive
         </h1>
         <p className="text-gray-300 text-sm sm:text-base max-w-2xl">
-          Browse all episodes of Love Talk Podcast hosted by Tim & Chels. Filter by topic, language (English / Hindi), or search for specific relationship advice.
+          Browse all episodes of Love Talk Podcast hosted By Kota RJ Pawan. Filter by topic, language (English / Hindi), or search for specific relationship advice.
         </p>
       </div>
 

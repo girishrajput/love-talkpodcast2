@@ -26,10 +26,10 @@ class DatabaseSeeder extends Seeder
         User::firstOrCreate(
             ['email' => $superAdminEmail],
             [
-                'name' => 'Tim (Host & Admin)',
+                'name' => 'Kota RJ Pawan (Host & Admin)',
                 'role' => UserRole::SUPER_ADMIN,
                 'status' => UserStatus::ACTIVE,
-                'avatar_url' => 'https://api.dicebear.com/7.x/avataaars/svg?seed=TimSuperAdmin',
+                'avatar_url' => 'https://api.dicebear.com/7.x/avataaars/svg?seed=KotaRJPawanSuperAdmin',
                 'last_login_at' => now(),
             ]
         );
@@ -118,7 +118,7 @@ class DatabaseSeeder extends Seeder
             '10% Discount on 1-on-1 Relationship Consultations',
             'Access to "Love Talk 1.0" eBook Edition',
             'Private Listener Discussion Forums',
-            'Direct Question Submission for Tim & Chels',
+            'Direct Question Submission for By Kota RJ Pawan',
             'Exclusive Bonus After-Show Audio Clips',
             'Monthly Relationship Worksheets & Guides',
             'Group Coaching Circles',
@@ -156,7 +156,7 @@ class DatabaseSeeder extends Seeder
                 'title' => 'Why Self Connection is the Foundation of Love',
                 'episode_number' => 14,
                 'slug' => 'why-self-connection-is-the-foundation',
-                'description' => 'In this episode, Tim & Chels dive deep into why understanding your own emotional needs, boundaries, and inner child is the prerequisite for building a healthy, lasting relationship.',
+                'description' => 'In this episode, Kota RJ Pawan dives deep into why understanding your own emotional needs, boundaries, and inner child is the prerequisite for building a healthy, lasting relationship.',
                 'audio_url' => 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
                 'audio_duration' => 1840,
                 'cover_image' => '/images/episode_1.jpg',
@@ -224,7 +224,7 @@ class DatabaseSeeder extends Seeder
                 'title' => 'शादी और भविष्य के फैसले (Marriage & Financial Compatibility)',
                 'episode_number' => 10,
                 'slug' => 'marriage-and-financial-compatibility',
-                'description' => 'फाइनेंस और मैरिज कमिटमेंट पर खुल कर बात कैसे करें? Tim & Chels outline essential pre-marriage conversation frameworks for Indian couples.',
+                'description' => 'फाइनेंस और मैरिज कमिटमेंट पर खुल कर बात कैसे करें? Kota RJ Pawan outlines essential pre-marriage conversation frameworks for Indian couples.',
                 'audio_url' => 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
                 'audio_duration' => 2400,
                 'cover_image' => '/images/episode_1.jpg',

@@ -174,7 +174,7 @@ export default function HomePage() {
             <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
               {t('allEpisodesTitle')}
             </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Explore relationship conversations hosted by Tim & Chels</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Explore relationship conversations hosted By Kota RJ Pawan</p>
           </div>
 
           {/* Language filter pills */}
@@ -265,7 +265,7 @@ export default function HomePage() {
           <div className="bg-white dark:bg-gray-900 p-6 rounded-3xl border border-gray-200/80 dark:border-gray-800/80 space-y-4 shadow-sm">
             <Quote className="w-8 h-8 text-brand-400/40" />
             <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed italic">
-              "Tim and Chels feel like older siblings giving advice over coffee. Their episode on communication saved me from so much overthinking."
+              "Kota RJ Pawan feels like a trusted guide giving advice over coffee. His episode on communication saved me from so much overthinking."
             </p>
             <div className="flex items-center gap-3 pt-2">
               <div className="w-10 h-10 rounded-full bg-brand-600 text-white font-bold flex items-center justify-center text-sm">

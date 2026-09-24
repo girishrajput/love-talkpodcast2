@@ -22,7 +22,7 @@ export const Footer: React.FC = () => {
               <span className="font-bold text-xl text-white">Love Talk Podcast</span>
             </div>
             <p className="text-sm text-gray-400 leading-relaxed">
-              "Welcome to 'Love Talk' Podcast! We're glad that you are here." Hosted by Tim & Chels. Discussing relationships, mental health, and emotional growth every Friday.
+              "Welcome to 'Love Talk' Podcast! We're glad that you are here." Hosted By Kota RJ Pawan. Discussing relationships, mental health, and emotional growth every Friday.
             </p>
             <div className="flex items-center gap-3 pt-2">
               <a
@@ -109,7 +109,7 @@ export const Footer: React.FC = () => {
         </div>
 
         <div className="pt-8 border-t border-gray-800 flex flex-col md:flex-row items-center justify-between text-xs text-gray-500 gap-4">
-          <p>© {new Date().getFullYear()} Love Talk Podcast by Tim & Chels. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Love Talk Podcast By Kota RJ Pawan. All rights reserved.</p>
           <div className="flex gap-6">
             <Link href="/privacy-policy" className="hover:text-brand-400 transition-colors">Privacy Policy</Link>
             <Link href="/terms-of-service" className="hover:text-brand-400 transition-colors">Terms of Service</Link>

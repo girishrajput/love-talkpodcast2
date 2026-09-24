@@ -57,7 +57,7 @@ export const INITIAL_BENEFITS: PremiumBenefit[] = Array.from({ length: 25 }, (_,
     '10% Discount on 1-on-1 Relationship Consultations',
     'Access to "Love Talk 1.0" eBook Edition',
     'Private Listener Discussion Forums',
-    'Direct Question Submission for Tim & Chels',
+    'Direct Question Submission for By Kota RJ Pawan',
     'Exclusive Bonus After-Show Audio Clips',
     'Monthly Relationship Worksheets & Guides',
     'Group Coaching Circles',
@@ -90,7 +90,7 @@ export const INITIAL_EPISODES: Episode[] = [
     title: 'Why Self Connection is the Foundation of Love',
     episode_number: 14,
     slug: 'why-self-connection-is-the-foundation',
-    description: 'In this episode, Tim & Chels dive deep into why understanding your own emotional needs, boundaries, and inner child is the prerequisite for building a healthy, lasting relationship.',
+    description: 'In this episode, Kota RJ Pawan dives deep into why understanding your own emotional needs, boundaries, and inner child is the prerequisite for building a healthy, lasting relationship.',
     audio_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
     audio_duration: 1840, // 30m 40s
     cover_image: '/images/episode_1.jpg',
@@ -101,15 +101,15 @@ export const INITIAL_EPISODES: Episode[] = [
     access_type: 'PREMIUM', // Protected Premium Audio
     preview_duration: 60, // 60 seconds preview for free users
     listens_count: 14200,
-    transcript_en: `[00:00] Tim: Welcome back to Love Talk Podcast! I'm Tim.
-[00:05] Chels: And I'm Chels! Happy Friday everyone.
-[00:10] Tim: Today we are talking about something that hits close to home for so many of us - why you cannot truly love someone else until you build a deep connection with yourself.
-[00:45] Chels: Absolutely Tim. Overthinking, anxious attachment, and constant reassurance seeking often stem from losing touch with our own self-worth.
-[02:15] Tim: We share 3 actionable steps to practice self-compassion, ground your emotions, and show up authentically in your dating life.`,
-    transcript_hi: `[00:00] टिम: लव टॉक्स पॉडकास्ट में आपका स्वागत है! मैं टिम हूँ।
-[00:05] चेल्स: और मैं चेल्स! आप सभी को शुभ शुक्रवार।
-[00:10] टिम: आज हम एक ऐसे विषय पर बात कर रहे हैं जो हम सभी के दिल के बहुत करीब है - जब तक आप खुद से गहरा जुड़ाव नहीं बनाते, तब तक आप किसी और से सच्चा प्यार कैसे कर सकते हैं?
-[00:45] चेल्स: बिल्कुल टिम। अत्यधिक सोचना (overthinking) और लगातार आश्वासन मांगना अक्सर खुद से जुड़ाव खोने के कारण होता है।`,
+    transcript_en: `[00:00] Kota RJ Pawan: Welcome back to Love Talk Podcast! I'm Kota RJ Pawan.
+[00:05] Kota RJ Pawan: Happy Friday everyone.
+[00:10] Kota RJ Pawan: Today we are talking about something that hits close to home for so many of us - why you cannot truly love someone else until you build a deep connection with yourself.
+[00:45] Kota RJ Pawan: Overthinking, anxious attachment, and constant reassurance seeking often stem from losing touch with our own self-worth.
+[02:15] Kota RJ Pawan: We share 3 actionable steps to practice self-compassion, ground your emotions, and show up authentically in your dating life.`,
+    transcript_hi: `[00:00] कोटा आरजे पवन: लव टॉक्स पॉडकास्ट में आपका स्वागत है! मैं कोटा आरजे पवन हूँ।
+[00:05] कोटा आरजे पवन: आप सभी को शुभ शुक्रवार।
+[00:10] कोटा आरजे पवन: आज हम एक ऐसे विषय पर बात कर रहे हैं जो हम सभी के दिल के बहुत करीब है - जब तक आप खुद से गहरा जुड़ाव नहीं बनाते, तब तक आप किसी और से सच्चा प्यार कैसे कर सकते हैं?
+[00:45] कोटा आरजे पवन: अत्यधिक सोचना (overthinking) और लगातार आश्वासन मांगना अक्सर खुद से जुड़ाव खोने के कारण होता है।`,
     comments: [
       {
         id: 'c-1',
@@ -118,7 +118,7 @@ export const INITIAL_EPISODES: Episode[] = [
         user_email: 'ananya@example.com',
         user_avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
         rating: 5,
-        content: 'This episode came at the exact right moment in my life. Tim & Chels, your insights on anxious attachment helped me realize how much I was seeking external validation.',
+        content: 'This episode came at the exact right moment in my life. Kota RJ Pawan, your insights on anxious attachment helped me realize how much I was seeking external validation.',
         likes_count: 34,
         created_at: '2026-08-07T14:20:00Z'
       }
@@ -129,7 +129,7 @@ export const INITIAL_EPISODES: Episode[] = [
     title: 'रिश्तों में कम्यूनिकेशन और ओवरथिंकिंग (Communication & Overthinking)',
     episode_number: 13,
     slug: 'communication-and-overthinking-in-relationships',
-    description: 'कैसे ओवरथिंकिंग आपके रिश्ते को प्रभावित करती है और टिम-चेल्स के साथ समझें सही कम्यूनिकेशन का तरीका। Special bilingual episode addressing mixed signals and emotional safety.',
+    description: 'कैसे ओवरथिंकिंग आपके रिश्ते को प्रभावित करती है और कोटा आरजे पवन के साथ समझें सही कम्यूनिकेशन का तरीका। Special bilingual episode addressing mixed signals and emotional safety.',
     audio_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
     audio_duration: 2100, // 35m
     cover_image: '/images/podcast_cover.jpg',
@@ -140,8 +140,8 @@ export const INITIAL_EPISODES: Episode[] = [
     access_type: 'FREE',
     preview_duration: 0,
     listens_count: 22800,
-    transcript_en: `[00:00] Tim: Namaste and welcome to episode 13! Today we are discussing overthinking in modern relationships.`,
-    transcript_hi: `[00:00] टिम: नमस्ते और एपिसोड 13 में आपका स्वागत है! आज हम मॉडर्न रिलेशनशिप्स में ओवरथिंकिंग पर चर्चा कर रहे हैं।`,
+    transcript_en: `[00:00] Kota RJ Pawan: Namaste and welcome to episode 13! Today we are discussing overthinking in modern relationships.`,
+    transcript_hi: `[00:00] कोटा आरजे पवन: नमस्ते और एपिसोड 13 में आपका स्वागत है! आज हम मॉडर्न रिलेशनशिप्स में ओवरथिंकिंग पर चर्चा कर रहे हैं।`,
     comments: []
   },
   {
@@ -149,7 +149,7 @@ export const INITIAL_EPISODES: Episode[] = [
     title: 'Expectations vs Reality in Modern Dating',
     episode_number: 12,
     slug: 'expectations-vs-reality-in-dating',
-    description: 'Are social media aesthetics ruining your dating expectations? Tim & Chels discuss realistic romantic benchmarks, conflict resolution, and finding genuine partnership.',
+    description: 'Are social media aesthetics ruining your dating expectations? Kota RJ Pawan discusses realistic romantic benchmarks, conflict resolution, and finding genuine partnership.',
     audio_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
     audio_duration: 1650, // 27m 30s
     cover_image: '/images/tim_chels.jpg',
@@ -185,7 +185,7 @@ export const INITIAL_EPISODES: Episode[] = [
     title: 'शादी और भविष्य के फैसले (Marriage & Financial Compatibility)',
     episode_number: 10,
     slug: 'marriage-and-financial-compatibility',
-    description: 'फाइनेंस और मैरिज कमिटमेंट पर खुल कर बात कैसे करें? Tim & Chels outline essential pre-marriage conversation frameworks for Indian couples.',
+    description: 'फाइनेंस और मैरिज कमिटमेंट पर खुल कर बात कैसे करें? Kota RJ Pawan outlines essential pre-marriage conversation frameworks for Indian couples.',
     audio_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
     audio_duration: 2400, // 40m
     cover_image: '/images/episode_1.jpg',
@@ -206,7 +206,7 @@ export const INITIAL_PROFILES: UserProfile[] = [
     id: 'usr-superadmin',
     auth_user_id: 'google-superadmin-id',
     email: 'superadmin@lovetalkpodcast.in',
-    name: 'Super Admin Tim',
+    name: 'Super Admin Kota RJ Pawan',
     avatar_url: '/images/tim_chels.jpg',
     role: 'super_admin',
     status: 'active',
@@ -217,7 +217,7 @@ export const INITIAL_PROFILES: UserProfile[] = [
     id: 'usr-admin-1',
     auth_user_id: 'google-admin-id',
     email: 'admin@lovetalkpodcast.in',
-    name: 'Admin Chels',
+    name: 'Admin Team',
     avatar_url: '/images/tim_chels.jpg',
     role: 'admin',
     status: 'active',
@@ -275,8 +275,8 @@ export const INITIAL_SETTINGS: SiteSettings = {
   siteName: 'Love Talk Podcast',
   logoUrl: '/images/podcast_cover.jpg',
   contactEmail: 'support@lovetalkpodcast.in',
-  podcastName: 'Love Talk Podcast with Tim & Chels',
-  hostNames: 'Tim & Chels',
+  podcastName: 'Love Talk Podcast By Kota RJ Pawan',
+  hostNames: 'By Kota RJ Pawan',
   defaultLanguage: 'English & Hindi',
   enablePremium: true,
   enableYouthPlan: true,

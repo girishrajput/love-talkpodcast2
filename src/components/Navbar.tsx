@@ -61,7 +61,7 @@ export const Navbar: React.FC = () => {
             <div className="flex items-center gap-1.5 font-bold text-xl tracking-tight text-gray-900 dark:text-white">
               Love Talk <Heart className="w-4 h-4 text-brand-500 fill-brand-500 inline" />
             </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">with Tim & Chels</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">By Kota RJ Pawan</p>
           </div>
         </Link>
 

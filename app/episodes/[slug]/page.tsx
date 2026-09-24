@@ -241,7 +241,7 @@ export default function EpisodeDetailPage({ params }: { params: { slug: string }
             <h3 className="text-xl font-extrabold text-gray-900 dark:text-white">Episode Summary</h3>
             <p>{episode.description}</p>
 
-            <h4 className="text-lg font-bold text-gray-900 dark:text-white pt-4">Key Takeaways from Tim & Chels</h4>
+            <h4 className="text-lg font-bold text-gray-900 dark:text-white pt-4">Key Takeaways from By Kota RJ Pawan</h4>
             <ul className="space-y-3 list-disc pl-5">
               <li>Why self-awareness and emotional regulation are the bedrock of any healthy connection.</li>
               <li>How to communicate uncomfortable boundaries without feeling guilty.</li>
@@ -287,7 +287,7 @@ export default function EpisodeDetailPage({ params }: { params: { slug: string }
             </div>
             <div>
               <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white">Listener Reviews & Discussions</h2>
-              <p className="text-xs text-gray-500">Share your thoughts on this episode with Tim, Chels & the community</p>
+              <p className="text-xs text-gray-500">Share your thoughts on this episode with Kota RJ Pawan & the community</p>
             </div>
           </div>
           <span className="px-3 py-1 bg-brand-100 dark:bg-brand-950 text-brand-700 dark:text-brand-300 text-xs font-bold rounded-full">
@@ -337,7 +337,7 @@ export default function EpisodeDetailPage({ params }: { params: { slug: string }
           <textarea
             required
             rows={3}
-            placeholder="What did you think of Tim & Chels' points in this episode?..."
+            placeholder="What did you think of Kota RJ Pawan's points in this episode?..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
             className="w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"

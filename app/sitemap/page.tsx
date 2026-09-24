@@ -40,7 +40,7 @@ const sitemapData: RouteGroup[] = [
       { path: '/episodes', label: 'All Episodes', description: 'Browse full podcast episode catalog with filters & dual transcripts', isPublic: true },
       { path: '/search', label: 'Search Episodes', description: 'Search episodes by topic, title, host, or language tags', isPublic: true },
       { path: '/membership', label: 'Membership Plans & Pricing', description: 'Compare Youth ₹99 and Professional ₹399 membership tiers', isPublic: true },
-      { path: '/about', label: 'About Tim & Chels', description: 'Meet the hosts, podcast story, contact info & press inquiries', isPublic: true },
+      { path: '/about', label: 'About By Kota RJ Pawan', description: 'Meet the host, podcast story, contact info & press inquiries', isPublic: true },
     ]
   },
   {
