@@ -13,7 +13,14 @@
 *.tar.gz
 *.sql
 *.log
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+/storage/framework/cache/*
+!/storage/framework/cache/.gitignore
 .DS_Store
 .next
 .idea
 .vscode
+

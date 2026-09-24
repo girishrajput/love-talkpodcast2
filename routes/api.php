@@ -35,6 +35,9 @@ Route::get('/premium/audio/{id}', [AudioStreamController::class, 'show']);
 
 // Public Membership Plans & Perks
 Route::get('/membership-plans', [MembershipController::class, 'plans']);
+Route::get('/plans', [MembershipController::class, 'plans']);
+Route::get('/benefits', [SuperAdminController::class, 'getBenefits']);
+Route::get('/settings', [SuperAdminController::class, 'getSettings']);
 
 // Razorpay One-Time Orders & Subscriptions
 Route::post('/membership/create-order', [MembershipController::class, 'createOrder']);

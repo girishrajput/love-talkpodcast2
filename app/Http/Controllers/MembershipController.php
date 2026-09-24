@@ -47,18 +47,20 @@ class MembershipController extends Controller
      */
     public function createOrder(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'plan_id' => 'required|string',
-            'user_id' => 'nullable|string',
-        ]);
+        $planId = $request->input('plan_id') ?? $request->input('planId');
+        $userId = $request->input('user_id') ?? $request->input('userId');
 
-        $user = Auth::user() ?? User::find($validated['user_id']);
+        if (!$planId) {
+            return response()->json(['success' => false, 'message' => 'plan_id is required'], 422);
+        }
+
+        $user = Auth::user() ?? ($userId ? User::find($userId) : null);
         if (!$user) {
             return response()->json(['success' => false, 'message' => 'User must be authenticated'], 401);
         }
 
-        $plan = MembershipPlan::where('id', $validated['plan_id'])
-            ->orWhere('slug', $validated['plan_id'])
+        $plan = MembershipPlan::where('id', $planId)
+            ->orWhere('slug', $planId)
             ->first();
 
         if (!$plan) {
@@ -98,32 +100,34 @@ class MembershipController extends Controller
      */
     public function verifyPayment(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'razorpay_order_id' => 'required|string',
-            'razorpay_payment_id' => 'required|string',
-            'razorpay_signature' => 'required|string',
-            'user_id' => 'nullable|string',
-            'plan_id' => 'nullable|string',
-        ]);
+        $orderId = $request->input('razorpay_order_id') ?? $request->input('orderId');
+        $paymentId = $request->input('razorpay_payment_id') ?? $request->input('paymentId');
+        $signature = $request->input('razorpay_signature') ?? $request->input('signature');
+        $planId = $request->input('plan_id') ?? $request->input('planId');
+        $userId = $request->input('user_id') ?? $request->input('userId');
+
+        if (!$orderId || !$paymentId || !$signature) {
+            return response()->json(['success' => false, 'message' => 'Missing payment credentials'], 422);
+        }
 
         $isValid = $this->razorpayService->verifyPaymentSignature(
-            $validated['razorpay_order_id'],
-            $validated['razorpay_payment_id'],
-            $validated['razorpay_signature']
+            $orderId,
+            $paymentId,
+            $signature
         );
 
         if (!$isValid) {
             return response()->json(['success' => false, 'message' => 'Invalid payment signature'], 400);
         }
 
-        $order = MembershipOrder::where('razorpay_order_id', $validated['razorpay_order_id'])->first();
-        $user = Auth::user() ?? ($order ? $order->user : User::find($validated['user_id'] ?? null));
+        $order = MembershipOrder::where('razorpay_order_id', $orderId)->first();
+        $user = Auth::user() ?? ($order ? $order->user : ($userId ? User::find($userId) : null));
 
         if (!$user) {
             return response()->json(['success' => false, 'message' => 'User not found for payment activation'], 404);
         }
 
-        $plan = $order ? $order->plan : MembershipPlan::find($validated['plan_id'] ?? null);
+        $plan = $order ? $order->plan : ($planId ? (MembershipPlan::where('id', $planId)->orWhere('slug', $planId)->first()) : null);
         if (!$plan) {
             return response()->json(['success' => false, 'message' => 'Plan not found'], 404);
         }
@@ -135,8 +139,8 @@ class MembershipController extends Controller
         Payment::create([
             'user_id' => $user->id,
             'membership_id' => $membership->id,
-            'razorpay_payment_id' => $validated['razorpay_payment_id'],
-            'razorpay_order_id' => $validated['razorpay_order_id'],
+            'razorpay_payment_id' => $paymentId,
+            'razorpay_order_id' => $orderId,
             'amount' => $order ? $order->amount : ($plan->discounted_price ?? $plan->price),
             'currency' => $plan->currency,
             'status' => PaymentStatus::CAPTURED,
@@ -160,17 +164,19 @@ class MembershipController extends Controller
      */
     public function createSubscription(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'plan_id' => 'required|string',
-            'user_id' => 'nullable|string',
-        ]);
+        $planId = $request->input('plan_id') ?? $request->input('planId');
+        $userId = $request->input('user_id') ?? $request->input('userId');
 
-        $user = Auth::user() ?? User::find($validated['user_id']);
+        if (!$planId) {
+            return response()->json(['success' => false, 'message' => 'plan_id is required'], 422);
+        }
+
+        $user = Auth::user() ?? ($userId ? User::find($userId) : null);
         if (!$user) {
             return response()->json(['success' => false, 'message' => 'Authentication required'], 401);
         }
 
-        $plan = MembershipPlan::where('id', $validated['plan_id'])->orWhere('slug', $validated['plan_id'])->first();
+        $plan = MembershipPlan::where('id', $planId)->orWhere('slug', $planId)->first();
         if (!$plan) {
             return response()->json(['success' => false, 'message' => 'Plan not found'], 404);
         }
@@ -199,41 +205,43 @@ class MembershipController extends Controller
      */
     public function verifySubscription(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'razorpay_subscription_id' => 'required|string',
-            'razorpay_payment_id' => 'required|string',
-            'razorpay_signature' => 'required|string',
-            'plan_id' => 'required|string',
-            'user_id' => 'nullable|string',
-        ]);
+        $subId = $request->input('razorpay_subscription_id') ?? $request->input('subscriptionId');
+        $paymentId = $request->input('razorpay_payment_id') ?? $request->input('paymentId');
+        $signature = $request->input('razorpay_signature') ?? $request->input('signature');
+        $planId = $request->input('plan_id') ?? $request->input('planId');
+        $userId = $request->input('user_id') ?? $request->input('userId');
+
+        if (!$subId || !$paymentId || !$signature) {
+            return response()->json(['success' => false, 'message' => 'Missing subscription verification parameters'], 422);
+        }
 
         $isValid = $this->razorpayService->verifySubscriptionSignature(
-            $validated['razorpay_subscription_id'],
-            $validated['razorpay_payment_id'],
-            $validated['razorpay_signature']
+            $subId,
+            $paymentId,
+            $signature
         );
 
         if (!$isValid) {
             return response()->json(['success' => false, 'message' => 'Invalid subscription signature'], 400);
         }
 
-        $user = Auth::user() ?? User::find($validated['user_id'] ?? null);
+        $user = Auth::user() ?? ($userId ? User::find($userId) : null);
         if (!$user) {
             return response()->json(['success' => false, 'message' => 'User not found'], 404);
         }
 
-        $plan = MembershipPlan::where('id', $validated['plan_id'])->orWhere('slug', $validated['plan_id'])->first();
+        $plan = $planId ? (MembershipPlan::where('id', $planId)->orWhere('slug', $planId)->first()) : null;
         if (!$plan) {
             return response()->json(['success' => false, 'message' => 'Plan not found'], 404);
         }
 
-        $membership = $this->membershipService->activateMembership($user, $plan, $validated['razorpay_subscription_id']);
+        $membership = $this->membershipService->activateMembership($user, $plan, $subId);
 
         Payment::create([
             'user_id' => $user->id,
             'membership_id' => $membership->id,
-            'razorpay_payment_id' => $validated['razorpay_payment_id'],
-            'razorpay_subscription_id' => $validated['razorpay_subscription_id'],
+            'razorpay_payment_id' => $paymentId,
+            'razorpay_subscription_id' => $subId,
             'amount' => $plan->discounted_price ?? $plan->price,
             'currency' => $plan->currency,
             'status' => PaymentStatus::CAPTURED,
