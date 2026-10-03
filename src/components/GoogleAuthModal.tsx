@@ -168,7 +168,7 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
         </div>
 
         {/* Real Google OAuth Button (rendered via GIS SDK) */}
-        {hasValidClientId ? (
+        {hasValidClientId && (
           <div className="p-5 bg-emerald-500/5 dark:bg-emerald-950/20 border border-emerald-500/20 rounded-2xl space-y-3 text-center">
             <div className="flex items-center justify-center gap-2 text-xs font-bold text-emerald-600 dark:text-emerald-400">
               <CheckCircle2 className="w-4 h-4" /> Google Cloud Credentials Verified
@@ -186,65 +186,21 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
               Or open Google OAuth redirect page
             </button>
           </div>
-        ) : (
-          /* Show setup warning ONLY if NEXT_PUBLIC_GOOGLE_CLIENT_ID is missing or placeholder */
-          <div className="p-4 bg-brand-500/10 rounded-2xl border border-brand-500/20 text-xs space-y-1">
-            <p className="font-bold text-brand-600 dark:text-brand-400 flex items-center gap-1.5">
-              <ShieldAlert className="w-4 h-4" /> Google OAuth Credentials Setup Required
-            </p>
-            <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-[11px]">
-              Set <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded font-mono text-[10px]">NEXT_PUBLIC_GOOGLE_CLIENT_ID</code> in <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded font-mono text-[10px]">.env.local</code> to activate native Google Sign-In.
-            </p>
-          </div>
         )}
 
-        {/* Quick Testing Shortcuts (Preserved for local development) */}
-        {/* <div className="space-y-3 pt-2">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Local Testing Account Shortcuts:</p>
-            <span className="text-[10px] bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-400 px-2 py-0.5 rounded font-mono">Dev Mode</span>
-          </div>
-          
-          <div className="space-y-2">
-            <button
-              onClick={() => handleSignIn('priya.k@gmail.com', 'Priya Kapoor')}
-              disabled={isSubmitting}
-              className="w-full p-3 rounded-2xl bg-gray-50 dark:bg-gray-800/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-between text-left transition-all group"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-brand-600 text-white flex items-center justify-center font-bold text-xs">
-                  PK
-                </div>
-                <div>
-                  <p className="font-bold text-xs text-gray-900 dark:text-white group-hover:text-brand-600">Priya Kapoor</p>
-                  <p className="text-[11px] text-gray-500 font-mono">priya.k@gmail.com</p>
-                </div>
-              </div>
-              <span className="text-[10px] bg-brand-500/10 text-brand-600 font-bold px-2 py-0.5 rounded-full">Premium Member</span>
-            </button>
-
-            <button
-              onClick={() => handleSignIn('superadmin@lovetalkpodcast.in', 'Kota RJ Pawan (Super Admin)')}
-              disabled={isSubmitting}
-              className="w-full p-3 rounded-2xl bg-gray-50 dark:bg-gray-800/80 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-between text-left transition-all group"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-xs">
-                  K
-                </div>
-                <div>
-                  <p className="font-bold text-xs text-gray-900 dark:text-white group-hover:text-purple-600">Kota RJ Pawan (Host & Admin)</p>
-                  <p className="text-[11px] text-gray-500 font-mono">superadmin@lovetalkpodcast.in</p>
-                </div>
-              </div>
-              <span className="text-[10px] bg-purple-500/10 text-purple-600 font-bold px-2 py-0.5 rounded-full">Super Admin</span>
-            </button>
-          </div>
-        </div> */}
+        {/* Helpful Origin Setup Note */}
+        <div className="p-3.5 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-[11px] text-gray-700 dark:text-gray-300 space-y-1">
+          <p className="font-bold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
+            <Lock className="w-3.5 h-3.5" /> For Native Google Popup (Error 400: origin_mismatch fix):
+          </p>
+          <p className="text-[11px] text-gray-600 dark:text-gray-400 leading-relaxed">
+            In Google Cloud Console under <strong>Authorized JavaScript origins</strong>, add: <code className="bg-amber-100 dark:bg-amber-950/60 px-1 py-0.5 rounded font-mono font-bold text-amber-800 dark:text-amber-300">http://localhost</code> and <code className="bg-amber-100 dark:bg-amber-950/60 px-1 py-0.5 rounded font-mono font-bold text-amber-800 dark:text-amber-300">http://127.0.0.1</code>.
+          </p>
+        </div>
 
         <div className="relative flex py-1 items-center">
           <div className="flex-grow border-t border-gray-200 dark:border-gray-800"></div>
-          <span className="flex-shrink mx-3 text-[11px] text-gray-400 font-medium">Or enter custom Google account</span>
+          <span className="flex-shrink mx-3 text-[11px] text-gray-400 font-medium">Or Sign In directly with your Google Email</span>
           <div className="flex-grow border-t border-gray-200 dark:border-gray-800"></div>
         </div>
 
