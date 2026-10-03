@@ -78,7 +78,7 @@ const App: React.FC = () => {
               <ScrollToTop />
               <div className="min-h-screen flex flex-col justify-between bg-slate-50 text-slate-900 dark:bg-gray-950 dark:text-slate-100 transition-colors duration-200">
                 <Navbar />
-                <main className="flex-grow">
+                <main className="flex-grow max-w-6xl mx-auto">
                   <Routes>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/episodes" element={<EpisodesPage />} />

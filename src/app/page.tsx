@@ -70,7 +70,7 @@ export default function HomePage() {
   const isLatestPlaying = currentEpisode?.id === latestEpisode?.id && isPlaying;
 
   return (
-    <div className="space-y-16 pb-12">
+    <div className="space-y-16 pb-12 max-w-6xl mx-auto px-4 sm:px-6">
       
       {/* 1. Hero Section */}
       <section className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-brand-950/80 via-gray-900 to-gray-950 p-8 sm:p-14 text-white border border-brand-800/40 shadow-2xl">

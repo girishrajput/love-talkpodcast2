@@ -4,6 +4,8 @@ module.exports = {
   content: [
     './resources/**/*.{js,ts,jsx,tsx,blade.php}',
     './src/**/*.{js,ts,jsx,tsx}',
+    './app/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
