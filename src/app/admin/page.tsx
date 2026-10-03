@@ -197,13 +197,25 @@ export default function AdminPage() {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('type', type);
+      formData.append('subfolder', type === 'audio' ? 'audio' : 'covers');
 
       const res = await fetch('/api/upload', {
         method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+        },
         body: formData
       });
 
-      const json = await res.json();
+      let json: any;
+      const contentType = res.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        json = await res.json();
+      } else {
+        const text = await res.text();
+        throw new Error(`Upload failed (${res.status}): ${text.slice(0, 150)}`);
+      }
+
       if (!res.ok || !json.success) {
         throw new Error(json.error || 'Upload failed');
       }
