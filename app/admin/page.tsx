@@ -187,21 +187,36 @@ export default function AdminPage() {
   const openEditModal = async (ep: Episode) => {
     resetUploadStates();
     setEditingEpisode(ep);
-    setTitle(ep.title);
-    setEpNum(ep.episode_number);
-    setSlug(ep.slug);
-    setDesc(ep.description);
-    setAudioUrl(ep.audio_url);
-    setDuration(ep.audio_duration);
-    setCoverImg(ep.cover_image);
-    setLanguage(ep.language);
-    setTagsInput(ep.tags ? ep.tags.join(', ') : 'Self-Love, Relationships');
+    setTitle(ep.title || '');
+    setEpNum(Number(ep.episode_number) || 1);
+    setSlug(ep.slug || '');
+    setDesc(ep.description || '');
+    setAudioUrl(ep.audio_url || '');
+    setDuration(Number(ep.audio_duration) || 1800);
+    setCoverImg(ep.cover_image || '/images/podcast_cover.jpg');
+    setLanguage(ep.language || 'english');
+
+    let formattedTags = 'Self-Love, Relationships';
+    if (Array.isArray(ep.tags)) {
+      formattedTags = ep.tags.join(', ');
+    } else if (typeof ep.tags === 'string') {
+      try {
+        const parsed = JSON.parse(ep.tags);
+        if (Array.isArray(parsed)) {
+          formattedTags = parsed.join(', ');
+        } else {
+          formattedTags = ep.tags;
+        }
+      } catch {
+        formattedTags = ep.tags;
+      }
+    }
+    setTagsInput(formattedTags);
     setTranscriptEn(ep.transcript_en || '');
     setTranscriptHi(ep.transcript_hi || '');
     setIsModalOpen(true);
 
-    // If transcripts were not loaded in list, fetch full episode details
-    if (!ep.transcript_en && !ep.transcript_hi && ep.slug) {
+    if (ep.slug) {
       try {
         const fullEp = await fetchEpisodeBySlug(ep.slug);
         if (fullEp) {
@@ -225,8 +240,8 @@ export default function AdminPage() {
         setAudioError('Invalid audio file type. Only MP3 (.mp3) files are supported.');
         return;
       }
-      if (file.size > 50 * 1024 * 1024) {
-        setAudioError(`File size (${formatBytes(file.size)}) exceeds the 50MB maximum limit.`);
+      if (file.size > 120 * 1024 * 1024) {
+        setAudioError(`File size (${formatBytes(file.size)}) exceeds the 120MB maximum limit.`);
         return;
       }
       setAudioError('');
@@ -237,8 +252,8 @@ export default function AdminPage() {
         setCoverError('Invalid image file type. Only JPG, JPEG, PNG, and WebP images are allowed.');
         return;
       }
-      if (file.size > 10 * 1024 * 1024) {
-        setCoverError(`File size (${formatBytes(file.size)}) exceeds the 10MB maximum limit.`);
+      if (file.size > 15 * 1024 * 1024) {
+        setCoverError(`File size (${formatBytes(file.size)}) exceeds the 15MB maximum limit.`);
         return;
       }
       setCoverError('');
@@ -306,11 +321,11 @@ export default function AdminPage() {
 
     const payload = {
       title,
-      episode_number: epNum,
+      episode_number: Number(epNum),
       slug: slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
       description: desc,
       audio_url: audioUrl,
-      audio_duration: duration,
+      audio_duration: Number(duration),
       cover_image: coverImg || '/images/podcast_cover.jpg',
       language,
       tags: tagsArr,
@@ -318,20 +333,34 @@ export default function AdminPage() {
       transcript_hi: transcriptHi
     };
 
-    if (editingEpisode) {
-      await updateEpisodeApi({ id: editingEpisode.id, ...payload });
-    } else {
-      await createEpisodeApi({ ...payload, is_published: true });
-    }
+    try {
+      let ok = false;
+      if (editingEpisode) {
+        ok = await updateEpisodeApi({ id: editingEpisode.id, ...payload });
+      } else {
+        ok = await createEpisodeApi({ ...payload, is_published: true });
+      }
 
-    setIsModalOpen(false);
-    await loadData();
+      if (ok) {
+        setIsModalOpen(false);
+        await loadData();
+      } else {
+        alert('Failed to save episode. Please check form fields and try again.');
+      }
+    } catch (err: any) {
+      console.error('Save episode error:', err);
+      alert('Error saving episode: ' + (err.message || 'Unknown error'));
+    }
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this episode?')) {
-      await deleteEpisodeApi(id);
-      await loadData();
+    if (window.confirm('Are you sure you want to delete this episode?')) {
+      const ok = await deleteEpisodeApi(id);
+      if (ok) {
+        await loadData();
+      } else {
+        alert('Failed to delete episode. Please try again.');
+      }
     }
   };
 

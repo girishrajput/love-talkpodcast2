@@ -136,23 +136,37 @@ class EpisodeController extends Controller
     /**
      * Update the specified episode
      */
-    public function update(Request $request, string $id): JsonResponse
+    public function update(Request $request, ?string $id = null): JsonResponse
     {
-        $episode = Episode::where('id', $id)->orWhere('slug', $id)->firstOrFail();
+        $targetId = $id ?? $request->input('id') ?? $request->input('slug') ?? $request->query('id');
+        if (!$targetId) {
+            return response()->json(['success' => false, 'message' => 'Episode ID or slug is required'], 400);
+        }
+
+        $episode = Episode::where('id', $targetId)->orWhere('slug', $targetId)->first();
+        if (!$episode) {
+            return response()->json(['success' => false, 'message' => 'Episode not found'], 404);
+        }
 
         $validated = $request->validate([
             'title' => 'sometimes|required|string|max:255',
+            'episode_number' => 'nullable|integer',
+            'slug' => 'nullable|string',
             'description' => 'sometimes|required|string',
             'audio_url' => 'sometimes|required|string',
             'audio_duration' => 'sometimes|required|integer',
             'cover_image' => 'nullable|string',
             'language' => 'nullable|string|in:english,hindi,bilingual',
             'access_type' => 'nullable|string|in:FREE,PREMIUM',
-            'tags' => 'nullable|array',
+            'tags' => 'nullable',
             'transcript_en' => 'nullable|string',
             'transcript_hi' => 'nullable|string',
             'is_published' => 'nullable|boolean',
         ]);
+
+        if (isset($validated['tags']) && is_string($validated['tags'])) {
+            $validated['tags'] = array_values(array_filter(array_map('trim', explode(',', $validated['tags']))));
+        }
 
         $episode->update($validated);
 
@@ -165,9 +179,18 @@ class EpisodeController extends Controller
     /**
      * Remove the specified episode
      */
-    public function destroy(string $id): JsonResponse
+    public function destroy(Request $request, ?string $id = null): JsonResponse
     {
-        $episode = Episode::where('id', $id)->orWhere('slug', $id)->firstOrFail();
+        $targetId = $id ?? $request->input('id') ?? $request->query('id');
+        if (!$targetId) {
+            return response()->json(['success' => false, 'message' => 'Episode ID is required'], 400);
+        }
+
+        $episode = Episode::where('id', $targetId)->orWhere('slug', $targetId)->first();
+        if (!$episode) {
+            return response()->json(['success' => false, 'message' => 'Episode not found'], 404);
+        }
+
         $episode->delete();
 
         return response()->json([

@@ -86,7 +86,10 @@ export async function createEpisodeApi(episodeData: Partial<Episode>): Promise<b
   try {
     const res = await fetch('/api/episodes', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
       body: JSON.stringify(episodeData)
     });
     const json = await res.json();
@@ -102,9 +105,13 @@ export async function createEpisodeApi(episodeData: Partial<Episode>): Promise<b
  */
 export async function updateEpisodeApi(episodeData: Partial<Episode>): Promise<boolean> {
   try {
-    const res = await fetch('/api/episodes', {
+    const targetUrl = episodeData.id ? `/api/episodes/${encodeURIComponent(episodeData.id)}` : '/api/episodes';
+    const res = await fetch(targetUrl, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
       body: JSON.stringify(episodeData)
     });
     const json = await res.json();
@@ -120,8 +127,11 @@ export async function updateEpisodeApi(episodeData: Partial<Episode>): Promise<b
  */
 export async function deleteEpisodeApi(id: string): Promise<boolean> {
   try {
-    const res = await fetch(`/api/episodes?id=${encodeURIComponent(id)}`, {
-      method: 'DELETE'
+    const res = await fetch(`/api/episodes/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json',
+      }
     });
     const json = await res.json();
     return Boolean(json.success);

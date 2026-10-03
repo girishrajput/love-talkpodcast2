@@ -25,8 +25,8 @@ Route::post('/auth/logout', [GoogleAuthController::class, 'logout']);
 // Public Episodes & Comments
 Route::get('/episodes', [EpisodeController::class, 'index']);
 Route::post('/episodes', [EpisodeController::class, 'store']);
-Route::put('/episodes', [EpisodeController::class, 'update']);
-Route::delete('/episodes', [EpisodeController::class, 'destroy']);
+Route::put('/episodes/{id?}', [EpisodeController::class, 'update']);
+Route::delete('/episodes/{id?}', [EpisodeController::class, 'destroy']);
 Route::get('/episodes/{slug}', [EpisodeController::class, 'show']);
 Route::post('/episodes/{slug}/comments', [EpisodeController::class, 'addComment']);
 
