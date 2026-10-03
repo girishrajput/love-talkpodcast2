@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Search, Filter, Globe, LayoutGrid, List, SlidersHorizontal, Loader2 } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Search, Filter, Globe, LayoutGrid, List, SlidersHorizontal, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { fetchEpisodes } from '@/lib/api';
 import { Episode, CategoryTag } from '@/lib/types';
 import { useLanguage } from '@/context/LanguageContext';
@@ -16,6 +16,8 @@ export default function EpisodesPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
 
   useEffect(() => {
     async function load() {
@@ -27,6 +29,7 @@ export default function EpisodesPage() {
       });
       setEpisodes(data);
       setIsLoading(false);
+      setCurrentPage(1);
     }
     const timer = setTimeout(load, 300);
     return () => clearTimeout(timer);
@@ -43,25 +46,35 @@ export default function EpisodesPage() {
   ];
 
   // Filtering & Sorting
-  let filtered = episodes.filter((ep) => {
-    const matchesQuery = 
-      ep.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      ep.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      ep.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filtered = useMemo(() => {
+    const list = episodes.filter((ep) => {
+      const q = searchQuery.toLowerCase().trim();
+      const matchesQuery = !q || 
+        ep.title.toLowerCase().includes(q) ||
+        ep.description.toLowerCase().includes(q) ||
+        (ep.tags && ep.tags.some(t => t.toLowerCase().includes(q)));
 
-    const matchesLang = selectedLang === 'all' || ep.language === selectedLang;
-    const matchesTag = selectedTag === 'All' || ep.tags.includes(selectedTag);
+      const matchesLang = selectedLang === 'all' || ep.language === selectedLang;
+      const matchesTag = selectedTag === 'All' || (ep.tags && ep.tags.includes(selectedTag));
 
-    return matchesQuery && matchesLang && matchesTag;
-  });
+      return matchesQuery && matchesLang && matchesTag;
+    });
 
-  if (sortOrder === 'newest') {
-    filtered.sort((a, b) => new Date(b.publish_date).getTime() - new Date(a.publish_date).getTime());
-  } else if (sortOrder === 'oldest') {
-    filtered.sort((a, b) => new Date(a.publish_date).getTime() - new Date(b.publish_date).getTime());
-  } else if (sortOrder === 'popular') {
-    filtered.sort((a, b) => b.listens_count - a.listens_count);
-  }
+    if (sortOrder === 'newest') {
+      list.sort((a, b) => new Date(b.publish_date).getTime() - new Date(a.publish_date).getTime());
+    } else if (sortOrder === 'oldest') {
+      list.sort((a, b) => new Date(a.publish_date).getTime() - new Date(b.publish_date).getTime());
+    } else if (sortOrder === 'popular') {
+      list.sort((a, b) => b.listens_count - a.listens_count);
+    }
+    return list;
+  }, [episodes, searchQuery, selectedLang, selectedTag, sortOrder]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / itemsPerPage));
+  const paginatedEpisodes = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filtered.slice(start, start + itemsPerPage);
+  }, [filtered, currentPage, itemsPerPage]);
 
   return (
     <div className="space-y-8 pb-16">
@@ -158,7 +171,9 @@ export default function EpisodesPage() {
             </button>
           </div>
 
-          <span className="text-gray-400 font-mono">Showing {filtered.length} episodes</span>
+          <span className="text-gray-400 font-mono">
+            Showing {filtered.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, filtered.length)} of {filtered.length} episodes
+          </span>
         </div>
 
       </div>
@@ -172,9 +187,34 @@ export default function EpisodesPage() {
         </div>
       ) : (
         <div className={viewMode === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" : "space-y-4"}>
-          {filtered.map((ep) => (
+          {paginatedEpisodes.map((ep) => (
             <EpisodeCard key={ep.id} episode={ep} />
           ))}
+        </div>
+      )}
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 pt-8">
+          <button
+            onClick={() => { setCurrentPage(p => Math.max(1, p - 1)); window.scrollTo({ top: 300, behavior: 'smooth' }); }}
+            disabled={currentPage === 1}
+            className="px-4 py-2 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-800 text-sm font-bold text-gray-800 dark:text-gray-200 flex items-center gap-1.5 shadow-sm"
+          >
+            <ChevronLeft className="w-4 h-4" /> Previous
+          </button>
+
+          <span className="px-4 py-2 text-xs font-semibold text-gray-500">
+            Page {currentPage} of {totalPages}
+          </span>
+
+          <button
+            onClick={() => { setCurrentPage(p => Math.min(totalPages, p + 1)); window.scrollTo({ top: 300, behavior: 'smooth' }); }}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-800 text-sm font-bold text-gray-800 dark:text-gray-200 flex items-center gap-1.5 shadow-sm"
+          >
+            Next <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
       )}
 

@@ -15,7 +15,32 @@ class EpisodeController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Episode::query();
+        $columns = [
+            'id',
+            'title',
+            'episode_number',
+            'slug',
+            'description',
+            'audio_url',
+            'audio_duration',
+            'cover_image',
+            'language',
+            'tags',
+            'publish_date',
+            'is_published',
+            'access_type',
+            'preview_duration',
+            'listens_count',
+            'created_at',
+            'updated_at',
+        ];
+
+        if ($request->boolean('include_transcripts')) {
+            $columns[] = 'transcript_en';
+            $columns[] = 'transcript_hi';
+        }
+
+        $query = Episode::query()->select($columns);
 
         if (!$request->boolean('include_drafts')) {
             $query->where('is_published', true);
@@ -45,6 +70,7 @@ class EpisodeController extends Controller
 
         return response()->json([
             'success' => true,
+            'total' => $episodes->count(),
             'data' => $episodes,
         ]);
     }
