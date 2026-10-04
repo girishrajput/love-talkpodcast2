@@ -19,7 +19,7 @@ class CheckUserSuspension
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            if ($request->expectsJson()) {
+            if ($request->expectsJson() || $request->is('api/*')) {
                 return response()->json(['error' => 'Your account has been suspended.'], 403);
             }
 

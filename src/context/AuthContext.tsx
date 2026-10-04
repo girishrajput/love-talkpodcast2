@@ -9,8 +9,9 @@ interface AuthContextType {
   payments: PaymentRecord[];
   isPremium: boolean;
   isLoading: boolean;
-  loginWithGoogle: (email?: string, name?: string, avatar_url?: string, google_id?: string) => Promise<UserProfile>;
-  logout: () => void;
+  /** Sign in with the ID token (`credential`) returned by Google Identity Services. */
+  loginWithGoogle: (credential: string) => Promise<UserProfile>;
+  logout: () => Promise<void>;
   updateProfile: (data: Partial<UserProfile>) => Promise<void>;
   refreshSession: () => Promise<void>;
 }
@@ -24,97 +25,73 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isPremium, setIsPremium] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    async function initAuth() {
-      if (typeof window !== 'undefined') {
-        const savedUserStr = localStorage.getItem('lovetalk_auth_user');
-        if (savedUserStr) {
-          try {
-            const parsed = JSON.parse(savedUserStr);
-            setUser(parsed);
-            await fetchSession(parsed.id);
-          } catch (e) {
-            console.warn('Failed to parse auth user:', e);
-          }
-        }
-        setIsLoading(false);
-      }
-    }
-    initAuth();
-  }, []);
+  const clearState = () => {
+    setUser(null);
+    setMembership(null);
+    setPayments([]);
+    setIsPremium(false);
+  };
 
-  const fetchSession = async (userId: string) => {
+  // The server session cookie is the source of truth; ask it who we are.
+  const fetchSession = async () => {
     try {
-      const res = await fetch(`/api/auth/me?userId=${userId}`, { cache: 'no-store' });
-      if (res.ok) {
-        const json = await res.json();
-        if (json.success) {
-          setUser(json.user);
-          setMembership(json.membership);
-          setIsPremium(json.isPremium);
-          if (json.payments) {
-            setPayments(json.payments);
-          }
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('lovetalk_auth_user', JSON.stringify(json.user));
-          }
-        }
+      const res = await fetch('/api/auth/me', {
+        cache: 'no-store',
+        headers: { Accept: 'application/json' },
+      });
+      const json = res.ok ? await res.json() : null;
+      if (json?.success && json.user) {
+        setUser(json.user);
+        setMembership(json.membership);
+        setIsPremium(json.isPremium);
+        setPayments(json.payments || []);
+      } else {
+        clearState();
       }
     } catch (err) {
-      console.warn('Failed to sync session with MySQL API:', err);
+      console.warn('Failed to load session:', err);
     }
   };
 
-  const loginWithGoogle = async (
-    customEmail?: string, 
-    customName?: string,
-    customAvatar?: string,
-    customGoogleId?: string
-  ): Promise<UserProfile> => {
+  useEffect(() => {
+    // Drop the old client-side identity cache; it is no longer trusted.
+    try { localStorage.removeItem('lovetalk_auth_user'); } catch {}
+    fetchSession().finally(() => setIsLoading(false));
+  }, []);
+
+  const loginWithGoogle = async (credential: string): Promise<UserProfile> => {
     setIsLoading(true);
-
-    const email = customEmail || 'listener@lovetalkpodcast.in';
-    const name = customName || (email.split('@')[0]);
-    const avatar_url = customAvatar || `https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150`;
-    const google_id = customGoogleId || `google_${Date.now()}`;
-
     try {
       const res = await fetch('/api/auth/google', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name, avatar_url, google_id })
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ credential }),
       });
 
       const json = await res.json();
 
       if (!res.ok || !json.success) {
-        throw new Error(json.error || 'Authentication failed');
+        throw new Error(json.error || json.message || 'Authentication failed');
       }
 
       setUser(json.user);
       setMembership(json.membership);
       setIsPremium(json.isPremium);
-
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('lovetalk_auth_user', JSON.stringify(json.user));
-      }
-
-      setIsLoading(false);
+      setPayments(json.payments || []);
       return json.user;
-    } catch (err: any) {
-      console.error('Login error:', err);
+    } finally {
       setIsLoading(false);
-      throw err;
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    setMembership(null);
-    setIsPremium(false);
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('lovetalk_auth_user');
+  const logout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST', headers: { Accept: 'application/json' } });
+    } catch (err) {
+      console.warn('Logout request failed:', err);
     }
+    window.google?.accounts?.id?.disableAutoSelect?.();
+    clearState();
   };
 
   const updateProfile = async (data: Partial<UserProfile>) => {
@@ -122,16 +99,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const res = await fetch('/api/auth/profile', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user.id, ...data })
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(data),
       });
 
       const json = await res.json();
       if (json.success && json.user) {
         setUser(json.user);
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('lovetalk_auth_user', JSON.stringify(json.user));
-        }
       }
     } catch (err) {
       console.error('Failed to update profile via API:', err);
@@ -139,9 +113,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const refreshSession = async () => {
-    if (user) {
-      await fetchSession(user.id);
-    }
+    await fetchSession();
   };
 
   return (

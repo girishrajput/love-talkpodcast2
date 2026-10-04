@@ -42,7 +42,8 @@ class EpisodeController extends Controller
 
         $query = Episode::query()->select($columns);
 
-        if (!$request->boolean('include_drafts')) {
+        // Drafts are only visible to admins.
+        if (!$request->boolean('include_drafts') || !$request->user()?->isAdmin()) {
             $query->where('is_published', true);
         }
 

@@ -13,7 +13,7 @@ class EnsureUserIsAdmin
         $user = $request->user();
 
         if (!$user || !$user->isAdmin()) {
-            if ($request->expectsJson()) {
+            if ($request->expectsJson() || $request->is('api/*')) {
                 return response()->json(['error' => 'Unauthorized. Admin access required.'], 403);
             }
             return redirect('/')->with('error', 'Unauthorized access.');

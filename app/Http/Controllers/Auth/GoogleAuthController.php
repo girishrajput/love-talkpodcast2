@@ -10,30 +10,38 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 
 class GoogleAuthController extends Controller
 {
     /**
-     * Authenticate or register user with Google OAuth credentials / profile
+     * Sign in with a Google Identity Services ID token (the `credential`
+     * returned by the "Sign in with Google" button). The token is verified
+     * with Google before any user is created or logged in.
      */
     public function authenticateGoogle(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'email' => 'required|email',
-            'name' => 'nullable|string|max:255',
-            'avatar_url' => 'nullable|string',
-            'google_id' => 'nullable|string',
+            'credential' => 'required|string',
         ]);
 
-        $email = strtolower(trim($validated['email']));
-        $name = $validated['name'] ?? explode('@', $email)[0];
-        $avatarUrl = $validated['avatar_url'] ?? "https://api.dicebear.com/7.x/avataaars/svg?seed=" . urlencode($email);
-        $googleId = $validated['google_id'] ?? 'google_' . uniqid();
+        $payload = $this->verifyGoogleIdToken($validated['credential']);
+        if (!$payload) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Google sign-in could not be verified. Please try again.',
+            ], 401);
+        }
 
-        $initialSuperAdmin = env('INITIAL_SUPER_ADMIN_EMAIL', 'superadmin@lovetalkpodcast.in');
-        $isSuperAdminEmail = (strtolower($email) === strtolower($initialSuperAdmin)) || str_contains($email, 'superadmin');
+        $email = strtolower(trim($payload['email']));
+        $name = $payload['name'] ?? explode('@', $email)[0];
+        $avatarUrl = $payload['picture'] ?? "https://api.dicebear.com/7.x/avataaars/svg?seed=" . urlencode($email);
+        $googleId = $payload['sub'];
+
+        $initialSuperAdmin = env('INITIAL_SUPER_ADMIN_EMAIL');
+        $isSuperAdminEmail = $initialSuperAdmin && strtolower($email) === strtolower($initialSuperAdmin);
 
         $user = User::where('email', $email)->first();
 
@@ -68,6 +76,7 @@ class GoogleAuthController extends Controller
         // Refresh user relations
         $user->refresh();
         Auth::login($user, true);
+        $request->session()->regenerate();
 
         return response()->json([
             'success' => true,
@@ -114,8 +123,8 @@ class GoogleAuthController extends Controller
         $avatar = $googleUser->getAvatar();
         $sub = $googleUser->getId();
 
-        $initialSuperAdmin = env('INITIAL_SUPER_ADMIN_EMAIL', 'superadmin@lovetalkpodcast.in');
-        $isSuperAdmin = (strtolower($email) === strtolower($initialSuperAdmin)) || str_contains($email, 'superadmin');
+        $initialSuperAdmin = env('INITIAL_SUPER_ADMIN_EMAIL');
+        $isSuperAdmin = $initialSuperAdmin && strtolower($email) === strtolower($initialSuperAdmin);
 
         $user = User::where('email', $email)->first();
 
@@ -148,14 +157,6 @@ class GoogleAuthController extends Controller
     public function me(Request $request): JsonResponse
     {
         $user = Auth::user();
-
-        if (!$user && $request->filled('userId')) {
-            $user = User::find($request->query('userId'));
-        }
-
-        if (!$user && $request->filled('email')) {
-            $user = User::where('email', strtolower($request->query('email')))->first();
-        }
 
         if (!$user) {
             return response()->json([
@@ -195,12 +196,8 @@ class GoogleAuthController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user && $request->filled('userId')) {
-            $user = User::find($request->input('userId'));
-        }
-
         if (!$user) {
-            return response()->json(['success' => false, 'message' => 'User not found'], 404);
+            return response()->json(['success' => false, 'message' => 'Not authenticated'], 401);
         }
 
         $validated = $request->validate([
@@ -224,6 +221,46 @@ class GoogleAuthController extends Controller
                 'has_premium' => $user->hasPremiumAccess(),
             ],
         ]);
+    }
+
+    /**
+     * Verify a Google ID token via Google's tokeninfo endpoint and return its
+     * claims, or null if it is invalid, expired, or issued for another client.
+     */
+    private function verifyGoogleIdToken(string $idToken): ?array
+    {
+        $clientId = config('services.google.client_id');
+        if (empty($clientId)) {
+            Log::error('GOOGLE_CLIENT_ID is not configured');
+            return null;
+        }
+
+        try {
+            $response = Http::timeout(10)->get('https://oauth2.googleapis.com/tokeninfo', [
+                'id_token' => $idToken,
+            ]);
+        } catch (\Throwable $e) {
+            Log::warning('Google tokeninfo request failed: ' . $e->getMessage());
+            return null;
+        }
+
+        if (!$response->successful()) {
+            return null;
+        }
+
+        $claims = $response->json();
+
+        $validIssuer = in_array($claims['iss'] ?? '', ['accounts.google.com', 'https://accounts.google.com'], true);
+        $validAudience = ($claims['aud'] ?? '') === $clientId;
+        $notExpired = (int) ($claims['exp'] ?? 0) > time();
+        $emailVerified = filter_var($claims['email_verified'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
+        if (!$validIssuer || !$validAudience || !$notExpired || !$emailVerified || empty($claims['email']) || empty($claims['sub'])) {
+            Log::warning('Rejected Google ID token', ['aud' => $claims['aud'] ?? null, 'iss' => $claims['iss'] ?? null]);
+            return null;
+        }
+
+        return $claims;
     }
 
     /**

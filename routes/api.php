@@ -8,6 +8,8 @@ use App\Http\Controllers\RazorpayWebhookController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\UploadController;
+use App\Http\Middleware\EnsureUserIsAdmin;
+use App\Http\Middleware\EnsureUserIsSuperAdmin;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,9 +26,6 @@ Route::post('/auth/logout', [GoogleAuthController::class, 'logout']);
 
 // Public Episodes & Comments
 Route::get('/episodes', [EpisodeController::class, 'index']);
-Route::post('/episodes', [EpisodeController::class, 'store']);
-Route::put('/episodes/{id?}', [EpisodeController::class, 'update']);
-Route::delete('/episodes/{id?}', [EpisodeController::class, 'destroy']);
 Route::get('/episodes/{slug}', [EpisodeController::class, 'show']);
 Route::post('/episodes/{slug}/comments', [EpisodeController::class, 'addComment']);
 
@@ -52,14 +51,19 @@ Route::post('/razorpay/subscription/verify', [MembershipController::class, 'veri
 // Razorpay Webhooks (HMAC Verified)
 Route::post('/webhooks/razorpay', [RazorpayWebhookController::class, 'handle']);
 
-// Media Uploads
-Route::post('/upload', [UploadController::class, 'upload']);
+// Admin: episode management & media uploads
+Route::middleware(EnsureUserIsAdmin::class)->group(function () {
+    Route::post('/episodes', [EpisodeController::class, 'store']);
+    Route::put('/episodes/{id?}', [EpisodeController::class, 'update']);
+    Route::delete('/episodes/{id?}', [EpisodeController::class, 'destroy']);
+    Route::post('/upload', [UploadController::class, 'upload']);
+});
 
 // Newsletter Subscription
 Route::post('/subscribers', [SubscriberController::class, 'store']);
 
 // Super Admin Management APIs
-Route::prefix('super-admin')->group(function () {
+Route::prefix('super-admin')->middleware(EnsureUserIsSuperAdmin::class)->group(function () {
     Route::get('/plans', [SuperAdminController::class, 'getPlans']);
     Route::put('/plans/{id}', [SuperAdminController::class, 'updatePlan']);
     Route::get('/benefits', [SuperAdminController::class, 'getBenefits']);

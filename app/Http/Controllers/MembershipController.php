@@ -48,13 +48,12 @@ class MembershipController extends Controller
     public function createOrder(Request $request): JsonResponse
     {
         $planId = $request->input('plan_id') ?? $request->input('planId');
-        $userId = $request->input('user_id') ?? $request->input('userId');
 
         if (!$planId) {
             return response()->json(['success' => false, 'message' => 'plan_id is required'], 422);
         }
 
-        $user = Auth::user() ?? ($userId ? User::find($userId) : null);
+        $user = Auth::user();
         if (!$user) {
             return response()->json(['success' => false, 'message' => 'User must be authenticated'], 401);
         }
@@ -103,8 +102,6 @@ class MembershipController extends Controller
         $orderId = $request->input('razorpay_order_id') ?? $request->input('orderId');
         $paymentId = $request->input('razorpay_payment_id') ?? $request->input('paymentId');
         $signature = $request->input('razorpay_signature') ?? $request->input('signature');
-        $planId = $request->input('plan_id') ?? $request->input('planId');
-        $userId = $request->input('user_id') ?? $request->input('userId');
 
         if (!$orderId || !$paymentId || !$signature) {
             return response()->json(['success' => false, 'message' => 'Missing payment credentials'], 422);
@@ -120,16 +117,20 @@ class MembershipController extends Controller
             return response()->json(['success' => false, 'message' => 'Invalid payment signature'], 400);
         }
 
+        // The order (created server-side) decides who paid and for which plan.
         $order = MembershipOrder::where('razorpay_order_id', $orderId)->first();
-        $user = Auth::user() ?? ($order ? $order->user : ($userId ? User::find($userId) : null));
-
-        if (!$user) {
-            return response()->json(['success' => false, 'message' => 'User not found for payment activation'], 404);
+        if (!$order) {
+            return response()->json(['success' => false, 'message' => 'Order not found'], 404);
         }
 
-        $plan = $order ? $order->plan : ($planId ? (MembershipPlan::where('id', $planId)->orWhere('slug', $planId)->first()) : null);
-        if (!$plan) {
-            return response()->json(['success' => false, 'message' => 'Plan not found'], 404);
+        if (Payment::where('razorpay_payment_id', $paymentId)->exists()) {
+            return response()->json(['success' => false, 'message' => 'Payment already processed'], 409);
+        }
+
+        $user = $order->user;
+        $plan = $order->plan;
+        if (!$user || !$plan) {
+            return response()->json(['success' => false, 'message' => 'Order is missing its user or plan'], 404);
         }
 
         // Activate membership
@@ -141,16 +142,14 @@ class MembershipController extends Controller
             'membership_id' => $membership->id,
             'razorpay_payment_id' => $paymentId,
             'razorpay_order_id' => $orderId,
-            'amount' => $order ? $order->amount : ($plan->discounted_price ?? $plan->price),
+            'amount' => $order->amount,
             'currency' => $plan->currency,
             'status' => PaymentStatus::CAPTURED,
             'payment_method' => 'upi',
             'paid_at' => now(),
         ]);
 
-        if ($order) {
-            $order->update(['status' => 'paid']);
-        }
+        $order->update(['status' => 'paid']);
 
         return response()->json([
             'success' => true,
@@ -165,13 +164,12 @@ class MembershipController extends Controller
     public function createSubscription(Request $request): JsonResponse
     {
         $planId = $request->input('plan_id') ?? $request->input('planId');
-        $userId = $request->input('user_id') ?? $request->input('userId');
 
         if (!$planId) {
             return response()->json(['success' => false, 'message' => 'plan_id is required'], 422);
         }
 
-        $user = Auth::user() ?? ($userId ? User::find($userId) : null);
+        $user = Auth::user();
         if (!$user) {
             return response()->json(['success' => false, 'message' => 'Authentication required'], 401);
         }
@@ -188,6 +186,17 @@ class MembershipController extends Controller
 
         try {
             $subData = $this->razorpayService->createSubscription($rzpPlanId);
+
+            // Record which user/plan this subscription belongs to, so verification
+            // never has to trust plan or user values sent by the browser.
+            MembershipOrder::create([
+                'user_id' => $user->id,
+                'plan_id' => $plan->id,
+                'razorpay_order_id' => $subData['subscriptionId'],
+                'amount' => $plan->discounted_price ?? $plan->price,
+                'currency' => $plan->currency,
+                'status' => 'created',
+            ]);
 
             return response()->json([
                 'success' => true,
@@ -208,8 +217,6 @@ class MembershipController extends Controller
         $subId = $request->input('razorpay_subscription_id') ?? $request->input('subscriptionId');
         $paymentId = $request->input('razorpay_payment_id') ?? $request->input('paymentId');
         $signature = $request->input('razorpay_signature') ?? $request->input('signature');
-        $planId = $request->input('plan_id') ?? $request->input('planId');
-        $userId = $request->input('user_id') ?? $request->input('userId');
 
         if (!$subId || !$paymentId || !$signature) {
             return response()->json(['success' => false, 'message' => 'Missing subscription verification parameters'], 422);
@@ -225,14 +232,19 @@ class MembershipController extends Controller
             return response()->json(['success' => false, 'message' => 'Invalid subscription signature'], 400);
         }
 
-        $user = Auth::user() ?? ($userId ? User::find($userId) : null);
-        if (!$user) {
-            return response()->json(['success' => false, 'message' => 'User not found'], 404);
+        $order = MembershipOrder::where('razorpay_order_id', $subId)->first();
+        if (!$order) {
+            return response()->json(['success' => false, 'message' => 'Subscription not found'], 404);
         }
 
-        $plan = $planId ? (MembershipPlan::where('id', $planId)->orWhere('slug', $planId)->first()) : null;
-        if (!$plan) {
-            return response()->json(['success' => false, 'message' => 'Plan not found'], 404);
+        if (Payment::where('razorpay_payment_id', $paymentId)->exists()) {
+            return response()->json(['success' => false, 'message' => 'Payment already processed'], 409);
+        }
+
+        $user = $order->user;
+        $plan = $order->plan;
+        if (!$user || !$plan) {
+            return response()->json(['success' => false, 'message' => 'Subscription is missing its user or plan'], 404);
         }
 
         $membership = $this->membershipService->activateMembership($user, $plan, $subId);
@@ -242,12 +254,14 @@ class MembershipController extends Controller
             'membership_id' => $membership->id,
             'razorpay_payment_id' => $paymentId,
             'razorpay_subscription_id' => $subId,
-            'amount' => $plan->discounted_price ?? $plan->price,
-            'currency' => $plan->currency,
+            'amount' => $order->amount,
+            'currency' => $order->currency,
             'status' => PaymentStatus::CAPTURED,
             'payment_method' => 'card',
             'paid_at' => now(),
         ]);
+
+        $order->update(['status' => 'paid']);
 
         return response()->json([
             'success' => true,

@@ -24,3 +24,6 @@
 .idea
 .vscode
 
+/deploy
+.env.bak*
+.env.local.bak*

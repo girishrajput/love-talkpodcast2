@@ -13,7 +13,7 @@ class EnsureUserIsSuperAdmin
         $user = $request->user();
 
         if (!$user || !$user->isSuperAdmin()) {
-            if ($request->expectsJson()) {
+            if ($request->expectsJson() || $request->is('api/*')) {
                 return response()->json(['error' => 'Unauthorized. Super Admin access required.'], 403);
             }
             return redirect('/')->with('error', 'Unauthorized access.');

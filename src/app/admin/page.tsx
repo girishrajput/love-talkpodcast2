@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { 
   ShieldCheck, 
   Lock, 
@@ -47,15 +48,9 @@ function formatBytes(bytes: number): string {
 }
 
 export default function AdminPage() {
-  const { user } = useAuth();
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('lovetalk_admin_auth') === 'true';
-    }
-    return false;
-  });
-  const [passcode, setPasscode] = useState('');
-  const [authError, setAuthError] = useState('');
+  const { user, isLoading: isAuthLoading, logout } = useAuth();
+  // Access comes from the signed-in Google account's role; the server enforces the same rule.
+  const isAuthenticated = user?.role === 'admin' || user?.role === 'super_admin';
 
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [subscribers, setSubscribers] = useState(getStoredSubscribers());
@@ -100,16 +95,6 @@ export default function AdminPage() {
   const audioFileInputRef = useRef<HTMLInputElement>(null);
   const coverFileInputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-authenticate if user is admin or super_admin
-  useEffect(() => {
-    if (user?.role === 'admin' || user?.role === 'super_admin') {
-      setIsAuthenticated(true);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('lovetalk_admin_auth', 'true');
-      }
-    }
-  }, [user]);
-
   const loadData = async () => {
     try {
       setIsLoading(true);
@@ -122,29 +107,13 @@ export default function AdminPage() {
     }
   };
 
+  // Reload once admin access is known so drafts are included.
   useEffect(() => {
-    loadData();
-  }, []);
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (passcode === 'admin' || passcode === 'lovetalk' || passcode === 'lovetalk2026') {
-      setIsAuthenticated(true);
-      setAuthError('');
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('lovetalk_admin_auth', 'true');
-      }
-    } else {
-      setAuthError('Invalid admin passcode. (Try: lovetalk2026)');
-    }
-  };
+    if (isAuthenticated) loadData();
+  }, [isAuthenticated]);
 
   const handleAdminLogout = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('lovetalk_admin_auth');
-    }
-    setIsAuthenticated(false);
-    setPasscode('');
+    logout();
   };
 
   const autoGenerateSlug = (text: string) => {
@@ -382,42 +351,6 @@ export default function AdminPage() {
     document.body.removeChild(link);
   };
 
-  // If not authenticated, render Login Screen
-  if (!isAuthenticated) {
-    return (
-      <div className="max-w-md mx-auto py-16 px-4">
-        <div className="bg-white dark:bg-gray-900 p-8 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-xl space-y-6 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-brand-600/10 text-brand-600 mx-auto flex items-center justify-center">
-            <Lock className="w-8 h-8" />
-          </div>
-          
-          <div>
-            <h1 className="text-2xl font-extrabold text-gray-900 dark:text-white">Love Talk Admin</h1>
-            <p className="text-xs text-gray-500 mt-1">Enter passcode to manage episodes & subscribers</p>
-          </div>
-
-          <form onSubmit={handleLogin} className="space-y-4">
-            <input
-              type="password"
-              placeholder="Password"
-              value={passcode}
-              onChange={(e) => setPasscode(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-center text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 font-mono"
-            />
-            
-            {authError && <p className="text-xs text-rose-500 font-semibold">{authError}</p>}
-
-            <button
-              type="submit"
-              className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-md transition-all"
-            >
-              Unlock Dashboard
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
 
   // Filter & Pagination for 1000+ Episodes
   const filteredEpisodes = useMemo(() => {
@@ -447,6 +380,39 @@ export default function AdminPage() {
     const start = (currentPage - 1) * itemsPerPage;
     return filteredEpisodes.slice(start, start + itemsPerPage);
   }, [filteredEpisodes, currentPage, itemsPerPage]);
+
+  // If not authenticated, render Login Screen
+  if (!isAuthenticated) {
+    return (
+      <div className="max-w-md mx-auto py-16 px-4">
+        <div className="bg-white dark:bg-gray-900 p-8 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-xl space-y-6 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-brand-600/10 text-brand-600 mx-auto flex items-center justify-center">
+            <Lock className="w-8 h-8" />
+          </div>
+          
+          <div>
+            <h1 className="text-2xl font-extrabold text-gray-900 dark:text-white">Love Talk Admin</h1>
+            <p className="text-xs text-gray-500 mt-1">
+              {isAuthLoading
+                ? 'Checking your account…'
+                : user
+                  ? `${user.email} does not have admin access.`
+                  : 'Sign in with an admin Google account to manage episodes & subscribers.'}
+            </p>
+          </div>
+
+          {!isAuthLoading && !user && (
+            <Link
+              href="/login"
+              className="block w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-md transition-all"
+            >
+              Sign in with Google
+            </Link>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   const totalListens = episodes.reduce((acc, curr) => acc + (curr.listens_count || 0), 0);
 

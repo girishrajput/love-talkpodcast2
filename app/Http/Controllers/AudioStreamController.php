@@ -47,9 +47,6 @@ class AudioStreamController extends Controller
 
         // 2. Check user authorization
         $user = Auth::user();
-        if (!$user && $request->has('userId')) {
-            $user = \App\Models\User::find($request->query('userId'));
-        }
 
         $hasAccess = $this->membershipService->hasPremiumAccess($user);
 

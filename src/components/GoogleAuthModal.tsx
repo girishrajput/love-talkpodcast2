@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { X, CheckCircle2, ShieldAlert, Sparkles, ArrowRight, User, Globe, Lock } from 'lucide-react';
+import { X, ShieldCheck } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 interface GoogleAuthModalProps {
@@ -16,135 +16,75 @@ declare global {
   }
 }
 
+const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
+
 export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const { loginWithGoogle } = useAuth();
-  const [googleEmail, setGoogleEmail] = useState('');
-  const [googleName, setGoogleName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const googleButtonRef = useRef<HTMLDivElement>(null);
 
-  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '294853883487-kpq1sh4j7c417qjdrco4uhk7d9rrm8m5.apps.googleusercontent.com';
-  const hasValidClientId = Boolean(
-    googleClientId && 
-    googleClientId !== 'your-google-client-id.apps.googleusercontent.com' &&
-    !googleClientId.includes('your-google-client-id')
-  );
-
-  useEffect(() => {
-    if (!isOpen || !hasValidClientId) return;
-
-    // Load Google Identity Services SDK script dynamically
-    const scriptId = 'google-gis-script';
-    let script = document.getElementById(scriptId) as HTMLScriptElement;
-
-    const initializeGis = () => {
-      if (window.google?.accounts?.id && googleClientId) {
-        window.google.accounts.id.initialize({
-          client_id: googleClientId,
-          callback: handleCredentialResponse,
-          auto_select: false,
-          cancel_on_tap_outside: true,
-        });
-
-        if (googleButtonRef.current) {
-          window.google.accounts.id.renderButton(googleButtonRef.current, {
-            theme: 'outline',
-            size: 'large',
-            width: 320,
-            text: 'continue_with',
-            shape: 'pill'
-          });
-        }
-      }
-    };
-
-    if (!script) {
-      script = document.createElement('script');
-      script.id = scriptId;
-      script.src = 'https://accounts.google.com/gsi/client';
-      script.async = true;
-      script.defer = true;
-      script.onload = initializeGis;
-      document.body.appendChild(script);
-    } else {
-      initializeGis();
-    }
-  }, [isOpen, hasValidClientId, googleClientId]);
-
-  const handleCredentialResponse = async (response: any) => {
+  // Keep the latest handler reachable from the GIS callback, which is registered once.
+  const credentialHandlerRef = useRef<(response: any) => void>(() => {});
+  credentialHandlerRef.current = async (response: any) => {
     try {
       setIsSubmitting(true);
       setErrorMsg('');
-      const token = response.credential;
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split('')
-          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-          .join('')
-      );
-      const payload = JSON.parse(jsonPayload);
-
-      const email = payload.email;
-      const name = payload.name || email.split('@')[0];
-      const picture = payload.picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(email)}`;
-      const googleId = payload.sub || `google_${Date.now()}`;
-
-      await loginWithGoogle(email, name, picture, googleId);
-      setIsSubmitting(false);
+      await loginWithGoogle(response.credential);
       onClose();
-      if (onSuccess) onSuccess();
+      onSuccess?.();
     } catch (err: any) {
-      console.error('Google OAuth Token verification failed:', err);
+      console.error('Google sign-in failed:', err);
       setErrorMsg(err.message || 'Google authentication failed');
+    } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    if (!isOpen || !googleClientId) return;
 
-  const triggerGoogleRedirectFlow = () => {
-    if (!googleClientId) return;
-    const redirectUri = `${window.location.origin}/api/auth/callback/google`;
-    const scope = encodeURIComponent('openid email profile');
-    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${googleClientId}&redirect_uri=${encodeURIComponent(
-      redirectUri
-    )}&response_type=code&scope=${scope}&access_type=offline&prompt=consent`;
-    window.location.href = authUrl;
-  };
+    const renderButton = () => {
+      if (!window.google?.accounts?.id || !googleButtonRef.current) return;
+      window.google.accounts.id.initialize({
+        client_id: googleClientId,
+        callback: (response: any) => credentialHandlerRef.current(response),
+        auto_select: false,
+        cancel_on_tap_outside: true,
+      });
+      window.google.accounts.id.renderButton(googleButtonRef.current, {
+        theme: 'outline',
+        size: 'large',
+        width: 320,
+        text: 'continue_with',
+        shape: 'pill',
+      });
+    };
 
-  const handleSignIn = async (emailToUse?: string, nameToUse?: string) => {
-    const targetEmail = emailToUse || googleEmail.trim();
-    const targetName = nameToUse || googleName.trim() || targetEmail.split('@')[0];
-
-    if (!targetEmail || !targetEmail.includes('@')) {
-      setErrorMsg('Please enter a valid Google email address.');
+    const scriptId = 'google-gis-script';
+    const existing = document.getElementById(scriptId) as HTMLScriptElement | null;
+    if (existing) {
+      if (window.google?.accounts?.id) renderButton();
+      else existing.addEventListener('load', renderButton, { once: true });
       return;
     }
 
-    try {
-      setIsSubmitting(true);
-      setErrorMsg('');
-      const googleId = `google_${Date.now()}`;
-      const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(targetEmail)}`;
+    const script = document.createElement('script');
+    script.id = scriptId;
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    script.onload = renderButton;
+    script.onerror = () => setErrorMsg('Could not load Google Sign-In. Check your connection and try again.');
+    document.body.appendChild(script);
+  }, [isOpen]);
 
-      await loginWithGoogle(targetEmail, targetName, avatarUrl, googleId);
-      setIsSubmitting(false);
-      onClose();
-      if (onSuccess) onSuccess();
-    } catch (err: any) {
-      console.error('Google Sign-In Error:', err);
-      setErrorMsg(err.message || 'Failed to authenticate with Google');
-      setIsSubmitting(false);
-    }
-  };
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-6 shadow-2xl relative my-8 animate-in fade-in zoom-in-95">
-        
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl relative my-8 animate-in fade-in zoom-in-95">
+
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 pb-4">
           <div className="flex items-center gap-3">
@@ -157,92 +97,34 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
               </svg>
             </div>
             <div>
-              <h3 className="font-extrabold text-lg text-gray-900 dark:text-white">Google OAuth Authentication</h3>
-              <p className="text-xs text-gray-500">Love Talk Podcast Account Sync</p>
+              <h3 className="font-extrabold text-lg text-gray-900 dark:text-white">Sign in with Google</h3>
+              <p className="text-xs text-gray-500">Love Talk Podcast</p>
             </div>
           </div>
 
-          <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800">
+          <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800" aria-label="Close">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Real Google OAuth Button (rendered via GIS SDK) */}
-        {hasValidClientId && (
-          <div className="p-5 bg-emerald-500/5 dark:bg-emerald-950/20 border border-emerald-500/20 rounded-2xl space-y-3 text-center">
-            <div className="flex items-center justify-center gap-2 text-xs font-bold text-emerald-600 dark:text-emerald-400">
-              <CheckCircle2 className="w-4 h-4" /> Google Cloud Credentials Verified
-            </div>
-            <p className="text-xs text-gray-600 dark:text-gray-300">
-              Click below to authenticate using your real Google account:
-            </p>
-
-            <div className="flex justify-center py-2" ref={googleButtonRef}></div>
-
-            <button
-              onClick={triggerGoogleRedirectFlow}
-              className="text-xs font-semibold text-brand-600 hover:underline"
-            >
-              Or open Google OAuth redirect page
-            </button>
+        {googleClientId ? (
+          <div className="flex flex-col items-center gap-3">
+            <div ref={googleButtonRef} className={isSubmitting ? 'opacity-50 pointer-events-none' : ''}></div>
+            {isSubmitting && <p className="text-xs text-gray-500">Signing you in…</p>}
           </div>
+        ) : (
+          <p className="text-xs text-rose-500 font-semibold text-center">
+            Google Sign-In is not configured (missing NEXT_PUBLIC_GOOGLE_CLIENT_ID).
+          </p>
         )}
 
-        {/* Helpful Origin Setup Note */}
-        <div className="p-3.5 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-[11px] text-gray-700 dark:text-gray-300 space-y-1">
-          <p className="font-bold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
-            <Lock className="w-3.5 h-3.5" /> For Native Google Popup (Error 400: origin_mismatch fix):
-          </p>
-          <p className="text-[11px] text-gray-600 dark:text-gray-400 leading-relaxed">
-            In Google Cloud Console under <strong>Authorized JavaScript origins</strong>, add: <code className="bg-amber-100 dark:bg-amber-950/60 px-1 py-0.5 rounded font-mono font-bold text-amber-800 dark:text-amber-300">http://localhost</code> and <code className="bg-amber-100 dark:bg-amber-950/60 px-1 py-0.5 rounded font-mono font-bold text-amber-800 dark:text-amber-300">http://127.0.0.1</code>.
-          </p>
-        </div>
+        {errorMsg && (
+          <p className="text-xs text-rose-500 font-semibold text-center">{errorMsg}</p>
+        )}
 
-        <div className="relative flex py-1 items-center">
-          <div className="flex-grow border-t border-gray-200 dark:border-gray-800"></div>
-          <span className="flex-shrink mx-3 text-[11px] text-gray-400 font-medium">Or Sign In directly with your Google Email</span>
-          <div className="flex-grow border-t border-gray-200 dark:border-gray-800"></div>
-        </div>
-
-        {/* Custom Input Form */}
-        <form onSubmit={(e) => { e.preventDefault(); handleSignIn(); }} className="space-y-3">
-          <div>
-            <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Google Email Address *</label>
-            <input
-              type="email"
-              required
-              placeholder="e.g. alex.smith@gmail.com"
-              value={googleEmail}
-              onChange={(e) => setGoogleEmail(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Display Name (Optional)</label>
-            <input
-              type="text"
-              placeholder="e.g. Alex Smith"
-              value={googleName}
-              onChange={(e) => setGoogleName(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
-            />
-          </div>
-
-          {errorMsg && (
-            <p className="text-xs text-rose-500 font-semibold">{errorMsg}</p>
-          )}
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2"
-          >
-            {isSubmitting ? 'Authenticating with MySQL...' : 'Sign In & Save to MySQL'}
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </form>
-
+        <p className="flex items-center justify-center gap-1.5 text-[11px] text-gray-400">
+          <ShieldCheck className="w-3.5 h-3.5" /> We only receive your name, email and profile photo.
+        </p>
       </div>
     </div>
   );

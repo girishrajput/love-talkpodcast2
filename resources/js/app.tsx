@@ -33,11 +33,19 @@ import TermsOfServicePage from '@/app/terms-of-service/page';
 import SearchPage from '@/app/search/page';
 import SitemapPage from '@/app/sitemap/page';
 
-// Patch window.fetch to support subfolder deployments (e.g. /love-talkpodcast2/public/)
+// App base path from the <base href> Laravel renders: '' on https://lovetalkpodcast.in,
+// '/love-talkpodcast2/public' on a local XAMPP subfolder.
+const detectedBase = (() => {
+  try {
+    return new URL(document.baseURI).pathname.replace(/\/$/, '');
+  } catch {
+    return '';
+  }
+})();
+
+// Patch window.fetch so root-relative API calls work from a subfolder deployment
 if (typeof window !== 'undefined') {
   const originalFetch = window.fetch;
-  const basePathMatch = window.location.pathname.match(/^(\/[^/]+\/public)/);
-  const detectedBase = basePathMatch ? basePathMatch[1] : '';
 
   window.fetch = function (input: RequestInfo | URL, init?: RequestInit) {
     if (typeof input === 'string') {
@@ -66,11 +74,8 @@ const ScrollToTop: React.FC = () => {
 
 // Main App Router & Layout
 const App: React.FC = () => {
-  const basePathMatch = window.location.pathname.match(/^(\/[^/]+\/public)/);
-  const basename = basePathMatch ? basePathMatch[1] : '';
-
   return (
-    <BrowserRouter basename={basename}>
+    <BrowserRouter basename={detectedBase}>
       <LanguageProvider>
         <ThemeProvider>
           <AuthProvider>
