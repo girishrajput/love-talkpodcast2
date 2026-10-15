@@ -10,7 +10,7 @@ return [
     'fallback_locale' => 'en',
     'faker_locale' => 'en_US',
     'cipher' => 'AES-256-CBC',
-    'key' => env('APP_KEY', 'base64:cGFzc3dvcmRmb3Jsb3ZldGFsa3BvZGNhc3QyMDI2IQ=='),
+    'key' => env('APP_KEY', 'base64:sYjPZLVNNUl6hVke6osHShwyZWMQovW3iCr/ENgwXRI='),
     'previous_keys' => [
         ...array_filter(
             explode(',', env('APP_PREVIOUS_KEYS', ''))

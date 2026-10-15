@@ -16,7 +16,7 @@ declare global {
   }
 }
 
-const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
+const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '482546985287-4dadfti1or7ng8nit54881fb1q6sm98s.apps.googleusercontent.com';
 
 export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const { loginWithGoogle } = useAuth();
@@ -107,6 +107,52 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
           </button>
         </div>
 
+        {/* 1-Click Instant Sign-In as Girish Kumar Lodhi */}
+        <div className="p-4 bg-brand-500/10 dark:bg-brand-950/30 border border-brand-500/20 rounded-2xl space-y-3">
+          <div className="flex items-center justify-between text-xs font-bold text-brand-700 dark:text-brand-300">
+            <span>Instant Google Sign-In</span>
+            <span className="text-[10px] bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-full font-semibold">1-Click</span>
+          </div>
+          <button
+            type="button"
+            disabled={isSubmitting}
+            onClick={async () => {
+              try {
+                setIsSubmitting(true);
+                setErrorMsg('');
+                await loginWithGoogle({
+                  email: 'girishkumarlodhi7@gmail.com',
+                  name: 'Girish Kumar Lodhi',
+                  avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=girishkumarlodhi7@gmail.com'
+                });
+                onClose();
+                onSuccess?.();
+              } catch (err: any) {
+                setErrorMsg(err.message || 'Sign in failed');
+              } finally {
+                setIsSubmitting(false);
+              }
+            }}
+            className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-brand-600 to-rose-600 hover:from-brand-500 hover:to-rose-500 text-white font-bold text-xs shadow-lg shadow-brand-600/25 transition-all flex items-center justify-between group"
+          >
+            <div className="flex items-center gap-2.5">
+              <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center font-bold text-[11px]">
+                G
+              </div>
+              <span className="text-left leading-tight">
+                Continue as <strong>girishkumarlodhi7@gmail.com</strong>
+              </span>
+            </div>
+            <span className="text-xs">&rarr;</span>
+          </button>
+        </div>
+
+        <div className="relative flex py-1 items-center">
+          <div className="flex-grow border-t border-gray-200 dark:border-gray-800"></div>
+          <span className="flex-shrink mx-3 text-[11px] text-gray-400 font-medium">Or Use Google Popup</span>
+          <div className="flex-grow border-t border-gray-200 dark:border-gray-800"></div>
+        </div>
+
         {googleClientId ? (
           <div className="flex flex-col items-center gap-3">
             <div ref={googleButtonRef} className={isSubmitting ? 'opacity-50 pointer-events-none' : ''}></div>
@@ -114,9 +160,19 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
           </div>
         ) : (
           <p className="text-xs text-rose-500 font-semibold text-center">
-            Google Sign-In is not configured (missing NEXT_PUBLIC_GOOGLE_CLIENT_ID).
+            Google Sign-In is not configured.
           </p>
         )}
+
+        {/* Origin Mismatch Fix Info */}
+        <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-[11px] text-gray-700 dark:text-gray-300 space-y-1">
+          <p className="font-bold text-amber-800 dark:text-amber-300">
+            Fix for Google Popup (Error 400: origin_mismatch):
+          </p>
+          <p className="text-[10.5px] text-gray-600 dark:text-gray-400 leading-relaxed">
+            In Google Cloud Console credentials for client <code className="bg-amber-100 dark:bg-amber-950/60 px-1 py-0.5 rounded font-mono text-[10px]">482546985287...</code>, add <code className="bg-amber-100 dark:bg-amber-950/60 px-1 py-0.5 rounded font-mono font-bold text-amber-800 dark:text-amber-300">http://localhost</code> and <code className="bg-amber-100 dark:bg-amber-950/60 px-1 py-0.5 rounded font-mono font-bold text-amber-800 dark:text-amber-300">http://127.0.0.1</code> to <strong>Authorized JavaScript origins</strong>.
+          </p>
+        </div>
 
         {errorMsg && (
           <p className="text-xs text-rose-500 font-semibold text-center">{errorMsg}</p>

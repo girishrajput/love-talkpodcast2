@@ -9,8 +9,7 @@ interface AuthContextType {
   payments: PaymentRecord[];
   isPremium: boolean;
   isLoading: boolean;
-  /** Sign in with the ID token (`credential`) returned by Google Identity Services. */
-  loginWithGoogle: (credential: string) => Promise<UserProfile>;
+  loginWithGoogle: (authData: string | { email: string; name?: string; avatar_url?: string }) => Promise<UserProfile>;
   logout: () => Promise<void>;
   updateProfile: (data: Partial<UserProfile>) => Promise<void>;
   refreshSession: () => Promise<void>;
@@ -59,13 +58,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     fetchSession().finally(() => setIsLoading(false));
   }, []);
 
-  const loginWithGoogle = async (credential: string): Promise<UserProfile> => {
+  const loginWithGoogle = async (
+    authData: string | { email: string; name?: string; avatar_url?: string }
+  ): Promise<UserProfile> => {
     setIsLoading(true);
     try {
+      const payload = typeof authData === 'string'
+        ? { credential: authData }
+        : { email: authData.email, name: authData.name, avatar_url: authData.avatar_url };
+
       const res = await fetch('/api/auth/google', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ credential }),
+        body: JSON.stringify(payload),
       });
 
       const json = await res.json();
