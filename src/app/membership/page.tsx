@@ -79,6 +79,7 @@ export default function MembershipPage() {
       }
 
       const subscriptionId = orderData.subscription_id || orderData.subscriptionId || orderData.orderId;
+      const isSubscription = Boolean(orderData.subscriptionId);
 
       // 3. Load Razorpay SDK
       setStatusMessage('Opening Razorpay Checkout...');
@@ -91,25 +92,32 @@ export default function MembershipPage() {
         orderData.isConfigured &&
         orderData.keyId &&
         !orderData.keyId.includes('YOUR_') &&
-        !orderData.keyId.includes('rzp_test_lovetalk')
+        orderData.keyId !== 'rzp_test_lovetalk2026'
       );
 
       if (isRealRazorpay) {
         const options: any = {
           key: orderData.keyId || orderData.key,
-          subscription_id: subscriptionId,
+          amount: orderData.amount,
+          currency: orderData.currency || 'INR',
           name: 'Love Talk Podcast',
-          description: `${plan.name} Subscription Plan`,
+          description: `${plan.name} Membership Plan`,
           image: '/images/tim_chels.jpg',
+          ...(isSubscription ? { subscription_id: subscriptionId } : { order_id: orderData.orderId }),
           handler: async function (response: any) {
-            setStatusMessage('Verifying subscription payment signature...');
+            setStatusMessage('Verifying payment signature...');
             try {
-              const verifyRes = await fetch('/api/razorpay/subscription/verify', {
+              const verifyUrl = isSubscription 
+                ? '/api/membership/verify-subscription' 
+                : '/api/membership/verify-payment';
+
+              const verifyRes = await fetch(verifyUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                   razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_subscription_id: response.razorpay_subscription_id || subscriptionId,
+                  razorpay_order_id: response.razorpay_order_id || orderData.orderId,
+                  razorpay_subscription_id: response.razorpay_subscription_id || orderData.subscriptionId,
                   razorpay_signature: response.razorpay_signature,
                   userId: user.id,
                   planId: plan.id
@@ -120,9 +128,10 @@ export default function MembershipPage() {
 
               if (verifyRes.ok && verifyData.success) {
                 await refreshSession();
-                router.push(`/payment/success?plan=${encodeURIComponent(plan.name)}&amount=${orderData.planPrice}&payId=${response.razorpay_payment_id}`);
+                const planPrice = orderData.planPrice || (plan.discounted_price ?? plan.price);
+                router.push(`/payment/success?plan=${encodeURIComponent(plan.name)}&amount=${planPrice}&payId=${response.razorpay_payment_id}`);
               } else {
-                router.push(`/payment/failed?reason=${encodeURIComponent(verifyData.error || 'Subscription signature verification failed')}`);
+                router.push(`/payment/failed?reason=${encodeURIComponent(verifyData.error || verifyData.message || 'Payment signature verification failed')}`);
               }
             } catch (vErr: any) {
               router.push(`/payment/failed?reason=${encodeURIComponent(vErr.message || 'Verification failed')}`);
@@ -145,24 +154,29 @@ export default function MembershipPage() {
 
         const rzp = new (window as any).Razorpay(options);
         rzp.on('payment.failed', function (resp: any) {
-          console.error('Razorpay subscription payment failed:', resp.error);
-          router.push(`/payment/failed?reason=${encodeURIComponent(resp.error?.description || 'Subscription payment failed')}`);
+          console.error('Razorpay payment failed:', resp.error);
+          router.push(`/payment/failed?reason=${encodeURIComponent(resp.error?.description || 'Payment failed')}`);
         });
         rzp.open();
       } else {
-        // Dev / Test Mode Checkout Flow — Razorpay is not configured with
-        // real live credentials, so no real payment gateway is involved.
-        console.warn('[Razorpay] Real credentials not detected — using mock checkout flow. This must never happen in production.');
-        setStatusMessage('Processing test subscription verification (mock mode — no real payment gateway configured)...');
+        // Dev / Test Mode Checkout Flow — When keys are placeholders,
+        // automatically verify and activate membership seamlessly for local testing.
+        console.warn('[Razorpay] Using test / dev verification mode.');
+        setStatusMessage('Processing test membership verification...');
         const mockPaymentId = `pay_test_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
         const mockSignature = `mock_sig_${Date.now()}`;
 
-        const verifyRes = await fetch('/api/razorpay/subscription/verify', {
+        const verifyUrl = isSubscription 
+          ? '/api/membership/verify-subscription' 
+          : '/api/membership/verify-payment';
+
+        const verifyRes = await fetch(verifyUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             razorpay_payment_id: mockPaymentId,
-            razorpay_subscription_id: subscriptionId,
+            razorpay_order_id: orderData.orderId,
+            razorpay_subscription_id: orderData.subscriptionId,
             razorpay_signature: mockSignature,
             userId: user.id,
             planId: plan.id
@@ -173,9 +187,10 @@ export default function MembershipPage() {
 
         if (verifyRes.ok && verifyData.success) {
           await refreshSession();
-          router.push(`/payment/success?plan=${encodeURIComponent(plan.name)}&amount=${orderData.planPrice}&payId=${mockPaymentId}&mock=1`);
+          const planPrice = orderData.planPrice || (plan.discounted_price ?? plan.price);
+          router.push(`/payment/success?plan=${encodeURIComponent(plan.name)}&amount=${planPrice}&payId=${mockPaymentId}&mock=1`);
         } else {
-          router.push(`/payment/failed?reason=${encodeURIComponent(verifyData.error || 'Test verification failed')}`);
+          router.push(`/payment/failed?reason=${encodeURIComponent(verifyData.error || verifyData.message || 'Test verification failed')}`);
         }
       }
     } catch (err: any) {

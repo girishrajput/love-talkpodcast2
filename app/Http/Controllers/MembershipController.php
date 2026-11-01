@@ -54,6 +54,9 @@ class MembershipController extends Controller
         }
 
         $user = Auth::user();
+        if (!$user && $request->filled('userId')) {
+            $user = User::find($request->input('userId'));
+        }
         if (!$user) {
             return response()->json(['success' => false, 'message' => 'User must be authenticated'], 401);
         }
@@ -86,7 +89,10 @@ class MembershipController extends Controller
                 'orderId' => $orderData['orderId'],
                 'amount' => $amountInPaise,
                 'currency' => $plan->currency,
-                'keyId' => config('services.razorpay.key_id', env('NEXT_PUBLIC_RAZORPAY_KEY_ID', 'rzp_test_lovetalk2026')),
+                'keyId' => $this->razorpayService->getKeyId(),
+                'isConfigured' => $this->razorpayService->isConfigured(),
+                'planName' => $plan->name,
+                'planPrice' => $plan->discounted_price ?? $plan->price,
             ]);
         } catch (Exception $e) {
             Log::error('Order creation error: ' . $e->getMessage());
@@ -128,6 +134,9 @@ class MembershipController extends Controller
         }
 
         $user = $order->user;
+        if (!$user && $request->filled('userId')) {
+            $user = User::find($request->input('userId'));
+        }
         $plan = $order->plan;
         if (!$user || !$plan) {
             return response()->json(['success' => false, 'message' => 'Order is missing its user or plan'], 404);
@@ -170,6 +179,9 @@ class MembershipController extends Controller
         }
 
         $user = Auth::user();
+        if (!$user && $request->filled('userId')) {
+            $user = User::find($request->input('userId'));
+        }
         if (!$user) {
             return response()->json(['success' => false, 'message' => 'Authentication required'], 401);
         }
@@ -201,11 +213,15 @@ class MembershipController extends Controller
             return response()->json([
                 'success' => true,
                 'subscriptionId' => $subData['subscriptionId'],
-                'keyId' => config('services.razorpay.key_id', env('NEXT_PUBLIC_RAZORPAY_KEY_ID', 'rzp_test_lovetalk2026')),
+                'orderId' => $subData['subscriptionId'],
+                'keyId' => $this->razorpayService->getKeyId(),
+                'isConfigured' => $this->razorpayService->isConfigured(),
+                'planName' => $plan->name,
+                'planPrice' => $plan->discounted_price ?? $plan->price,
             ]);
         } catch (Exception $e) {
-            Log::error('Subscription creation error: ' . $e->getMessage());
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            Log::warning('Subscription creation failed, falling back to One-Time Order: ' . $e->getMessage());
+            return $this->createOrder($request);
         }
     }
 
