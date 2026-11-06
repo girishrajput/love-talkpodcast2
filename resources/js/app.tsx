@@ -63,12 +63,17 @@ const EpisodeDetailWrapper: React.FC = () => {
   return <EpisodeDetailPage params={{ slug: slug || '' }} />;
 };
 
-// Scroll to top on route change
+// Scroll to top on route change & track Google Analytics pageview
 const ScrollToTop: React.FC = () => {
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [pathname]);
+    if (typeof window !== 'undefined' && typeof (window as any).gtag === 'function') {
+      (window as any).gtag('config', 'G-N8CXJ8LGB1', {
+        page_path: pathname + search,
+      });
+    }
+  }, [pathname, search]);
   return null;
 };
 

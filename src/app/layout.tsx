@@ -45,6 +45,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
+      <head>
+        {/* Google tag (gtag.js) */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-N8CXJ8LGB1" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-N8CXJ8LGB1');
+            `,
+          }}
+        />
+      </head>
       <body className="min-h-screen flex flex-col justify-between">
         <LanguageProvider>
           <ThemeProvider>

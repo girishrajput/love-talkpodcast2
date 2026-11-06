@@ -16,6 +16,16 @@
         <script src="https://accounts.google.com/gsi/client" async defer></script>
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-N8CXJ8LGB1"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-N8CXJ8LGB1');
+        </script>
+
         <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
 
         <!-- Scripts & Styles via Vite -->
