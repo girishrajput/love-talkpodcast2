@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Radio, ArrowRight } from 'lucide-react';
+import { Radio } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { GoogleAuthModal } from '@/components/GoogleAuthModal';
 
@@ -30,6 +30,7 @@ export default function LoginPage() {
     const errParam = urlParams.get('error');
     if (errParam) {
       setAuthError(decodeURIComponent(errParam));
+      window.history.replaceState({}, document.title, window.location.pathname);
       return;
     }
 
@@ -95,37 +96,6 @@ export default function LoginPage() {
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
             </svg>
             Sign in with Google
-          </button>
-
-          <div className="relative flex py-1 items-center">
-            <div className="flex-grow border-t border-gray-200 dark:border-gray-800"></div>
-            <span className="flex-shrink mx-2 text-[10px] text-gray-400 font-medium">or instant 1-click</span>
-            <div className="flex-grow border-t border-gray-200 dark:border-gray-800"></div>
-          </div>
-
-          {/* 1-Click Instant Sign-In */}
-          <button
-            type="button"
-            disabled={isLoading}
-            onClick={async () => {
-              try {
-                setAuthError(null);
-                await loginWithGoogle({
-                  email: 'girishkumarlodhi7@gmail.com',
-                  name: 'Girish Kumar Lodhi',
-                  avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=girishkumarlodhi7@gmail.com'
-                });
-              } catch (err: any) {
-                setAuthError(err.message || 'Login failed');
-              }
-            }}
-            className="w-full py-3 px-4 rounded-xl bg-gray-50 dark:bg-gray-800/80 hover:bg-gray-100 dark:hover:bg-gray-700/80 text-gray-700 dark:text-gray-200 font-semibold text-xs border border-gray-200 dark:border-gray-700 transition-all flex items-center justify-between group"
-          >
-            <div className="flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full bg-brand-600 text-white flex items-center justify-center font-bold text-[10px]">G</span>
-              <span>Fast Login as <strong>girishkumarlodhi7@gmail.com</strong></span>
-            </div>
-            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
           </button>
         </div>
 

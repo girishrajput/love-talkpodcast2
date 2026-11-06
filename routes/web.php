@@ -10,6 +10,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware(['web'])->group(function () {
+    // Root route with automatic Google OAuth callback handler if code or error query param is present
+    Route::get('/', function (\Illuminate\Http\Request $request) {
+        if ($request->filled('code') || $request->filled('error')) {
+            return app(\App\Http\Controllers\Auth\GoogleAuthController::class)->callback($request);
+        }
+        return view('app');
+    })->name('home');
+
     // Google Socialite Redirect & Callback
     Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google');
     Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');

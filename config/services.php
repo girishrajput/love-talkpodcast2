@@ -20,7 +20,7 @@ return [
         'webhook_secret' => env('RAZORPAY_WEBHOOK_SECRET', 'test_webhook_secret'),
     ],
     'google' => [
-        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_id' => env('GOOGLE_CLIENT_ID', env('NEXT_PUBLIC_GOOGLE_CLIENT_ID')),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
         'redirect' => env('GOOGLE_REDIRECT_URI'),
         'ca_bundle' => env('HTTP_CA_BUNDLE', 'C:/xampp/apache/bin/curl-ca-bundle.crt'),

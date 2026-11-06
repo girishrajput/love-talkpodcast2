@@ -131,15 +131,24 @@ class GoogleAuthController extends Controller
      */
     private function getRedirectUri(): string
     {
-        $currentHost = request()->getHttpHost(); // e.g. "localhost:8000", "127.0.0.1:8000", "localhost"
+        $currentHost = request()->getHttpHost(); // e.g. "localhost:8000", "127.0.0.1:8000", "localhost", "lovetalkpodcast.in", "www.lovetalkpodcast.in"
         $configured = config('services.google.redirect');
+
+        // If configured is explicitly set in .env (e.g. http://localhost:8000 or full URL)
+        if (!empty($configured)) {
+            // On production, if visitor uses www, return matching www callback if configured has non-www
+            if ($currentHost === 'www.lovetalkpodcast.in') {
+                return str_replace('://lovetalkpodcast.in', '://www.lovetalkpodcast.in', $configured);
+            }
+            return $configured;
+        }
 
         // If request is explicitly coming from artisan serve (e.g. port 8000 or 8080)
         if (str_contains($currentHost, ':8000') || str_contains($currentHost, ':8080')) {
             return url('/auth/google/callback');
         }
 
-        return $configured ?: url('/auth/google/callback');
+        return url('/auth/google/callback');
     }
 
     /**
@@ -157,8 +166,20 @@ class GoogleAuthController extends Controller
     /**
      * Handle Google OAuth Callback (Socialite)
      */
-    public function callback(): RedirectResponse
+    public function callback(Request $request): RedirectResponse
     {
+        // 1. Check if Google returned an error query param (e.g. user cancelled or denied access)
+        if ($request->has('error')) {
+            $error = $request->get('error_description') ?: $request->get('error');
+            Log::warning('Google OAuth returned error parameter: ' . $error, $request->all());
+            return redirect()->to(url('/login?error=' . urlencode('Google Sign-in cancelled: ' . $error)));
+        }
+
+        // 2. Check if authorization code is missing (e.g. refreshed callback page or opened callback URL directly)
+        if (!$request->filled('code')) {
+            return redirect()->to(url('/login?error=' . urlencode('Google authorization code missing. Please click "Sign in with Google" to start sign-in.')));
+        }
+
         try {
             $driver = Socialite::driver('google')->stateless();
             $driver->redirectUrl($this->getRedirectUri());
@@ -167,6 +188,7 @@ class GoogleAuthController extends Controller
         } catch (\Throwable $e) {
             Log::error('Socialite Google callback error [' . get_class($e) . ']: ' . $e->getMessage(), [
                 'exception' => $e,
+                'query' => $request->all(),
             ]);
             $errorDescription = $e->getMessage() ?: get_class($e);
             return redirect()->to(url('/login?error=' . urlencode('Google Auth Error: ' . $errorDescription)));
